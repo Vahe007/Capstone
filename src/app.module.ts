@@ -1,23 +1,32 @@
 import { Module } from '@nestjs/common';
-import { ConfigAppModule } from './config/config.module'
-// import { DatabaseModule } from './database/database.module';
-// import { DiagnosisModule } from './diagnosis/diagnosis.module';
-// import { QdrantModule } from './qdrant/qdrant.module';
-// import { OpenAIModule } from './openai/openai.module';
-// import { MLModelModule } from './ml_model/ml_model.module';
-import { QdrantModule } from './qdrant/qdrant.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
+import { UsersModule } from './modules/users.module';
+import configuration from './config/configuration';
 
 @Module({
   imports: [
-    ConfigAppModule,
-    DatabaseModule,
-    DiagnosisModule,
-    QdrantModule,
-    OpenAIModule,
-    MLModelModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '../.env',
+      load: [configuration]
+    }),
+
+    MongooseModule.forRoot('mongodb+srv://vmanukyan:randompassword777@cluster0.ue0jfgp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),
+
+    MongooseModule.forRootAsync({
+      useFactory: async (configService: ConfigService) => {
+        const dbUri = configService.get<string>('database.uri');
+        if (!dbUri) {
+            throw new Error('Database URI not configured in environment variables.');
+        }
+        return {
+          uri: dbUri,
+        };
+      },
+      inject: [ConfigService],
+    }),
+    UsersModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}
-

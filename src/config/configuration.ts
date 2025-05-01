@@ -1,7 +1,8 @@
-export default () => ({
-    port: parseInt(process.env.PORT, 10) || 3001,
+export default () => {
+  return {
+    port: parseInt(process.env.PORT!, 10) || 3001,
     database: {
-      uri: process.env.MONGODB_URI,
+      uri: process.env.DATABASE_CONNECTION_STRING,
     },
     openai: {
       apiKey: process.env.OPENAI_API_KEY,
@@ -10,14 +11,13 @@ export default () => ({
     },
     qdrant: {
       url: process.env.QDRANT_URL,
-      apiKey: process.env.QDRANT_API_KEY, // Optional
+      apiKey: process.env.QDRANT_API_KEY,
       collectionName: process.env.QDRANT_COLLECTION_NAME || 'heart_disease_cases',
-      vectorSize: parseInt(process.env.QDRANT_VECTOR_SIZE, 10) || 1536,
+      vectorSize: parseInt(process.env.QDRANT_VECTOR_SIZE!, 10) || 1536,
     },
     ml_model: {
       apiUrl: process.env.ML_MODEL_API_URL,
     },
-    // Add other configurations as needed
-  });
-  
+  }
+};
   
