@@ -12,12 +12,15 @@ export default () => {
     qdrant: {
       url: process.env.QDRANT_URL,
       apiKey: process.env.QDRANT_API_KEY,
-      collectionName: process.env.QDRANT_COLLECTION_NAME || 'heart_disease_cases',
+      collectionName:
+        process.env.QDRANT_COLLECTION_NAME || 'heart_disease_cases',
       vectorSize: parseInt(process.env.QDRANT_VECTOR_SIZE!, 10) || 1536,
     },
     ml_model: {
       apiUrl: process.env.ML_MODEL_API_URL,
     },
-  }
+    jwt_secret: process.env.JWT_SECRET,
+    host_email: process.env.HOST_EMAIL,
+    host_pass: process.env.HOST_PASS,
+  };
 };
-  

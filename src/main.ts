@@ -7,14 +7,13 @@ import * as dotenv from 'dotenv';
 
 const result = dotenv.config();
 
-console.log('result is result', result)
+console.log('result is result', result);
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
 
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT', 3001);
-    
 
   // app.enableVersioning({
   //   type: VersioningType.URI,
@@ -45,4 +44,3 @@ async function bootstrap() {
   console.log(`API Documentation available at: ${await app.getUrl()}/api-docs`);
 }
 bootstrap();
-

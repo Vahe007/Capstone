@@ -1,5 +1,8 @@
 import { Module, Global } from '@nestjs/common';
-import { ConfigModule as NestConfigModule, ConfigService } from '@nestjs/config';
+import {
+  ConfigModule as NestConfigModule,
+  ConfigService,
+} from '@nestjs/config';
 import configuration from '../config/configuration';
 
 @Global() // Make ConfigService available globally
@@ -7,13 +10,12 @@ import configuration from '../config/configuration';
   imports: [
     NestConfigModule.forRoot({
       load: [configuration],
-      isGlobal: true, // Make configuration accessible everywhere
-      cache: true, // Improve performance by caching config
-      envFilePath: '.env', // Specify your .env file path
+      isGlobal: true,
+      cache: true,
+      envFilePath: '.env',
     }),
   ],
-  providers: [ConfigService], // Export ConfigService for injection
+  providers: [ConfigService],
   exports: [ConfigService],
 })
-export class ConfigAppModule {} // Renamed to avoid conflict with NestJS internal ConfigModule
-
+export class ConfigAppModule {}

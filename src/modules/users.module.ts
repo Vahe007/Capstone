@@ -7,13 +7,16 @@ import { User, UserSchema } from 'src/schemas/user.schemas';
 import { UserService } from 'src/services/user.service';
 
 @Module({
-    imports: [
-        MongooseModule.forFeature([{
-            name: User.name,
-            schema: UserSchema
-        }])
-    ],
-    providers: [UserService],
-    controllers: [UserController]
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: User.name,
+        schema: UserSchema,
+      },
+    ]),
+  ],
+  providers: [UserService],
+  controllers: [UserController],
+  exports: [UserService]
 })
 export class UsersModule {}
