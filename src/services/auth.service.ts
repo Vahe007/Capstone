@@ -6,12 +6,12 @@ import {
 } from '@nestjs/common';
 import { SignInUserDto } from 'src/dto/loginUse.dto';
 import { UserService } from './user.service';
-import bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/dto/createUser.dto';
 import { EmailService } from './email.service';
 import { ConfigService } from '@nestjs/config';
 import { ChangePasswordDto } from 'src/dto/changePassword.dto';
+import bcrypt from 'bcrypt'
 
 @Injectable()
 export class AuthService {
@@ -31,8 +31,6 @@ export class AuthService {
 
   async signIn(data: SignInUserDto): Promise<{ access_token: string }> {
     this.jwtSecret = this.configService.get('jwt_secret')!;
-
-    console.log('jwt secret inside the authService', this.jwtSecret);
 
     const { userName, password } = data;
 
@@ -63,16 +61,16 @@ export class AuthService {
       email: data.email,
     });
 
-    const user = await this.userService.createUser({
-      password: passwordHash,
-      token: emailToken,
-      ...resetData,
-      isVerified: false,
-    });
+    // const user = await this.userService.createUser({
+    //   password: passwordHash,
+    //   token: emailToken,
+    //   ...resetData,
+    //   isVerified: false,
+    // });
 
-    if (!user) {
-      throw new HttpException('User creation failed', 404);
-    }
+    // if (!user) {
+    //   throw new HttpException('User creation failed', 404);
+    // }
 
     this.emailService.sendEmail(data.email, emailToken, EMAIL_SUBJECT.verify);
   }

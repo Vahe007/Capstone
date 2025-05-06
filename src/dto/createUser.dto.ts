@@ -4,6 +4,7 @@ import {
   IsEmail,
   IsNotEmpty,
   IsNumberString,
+  IsOptional,
   IsString,
 } from 'class-validator';
 
@@ -28,16 +29,19 @@ export class CreateUserDto {
   @IsString()
   password: string;
 
-  @IsNotEmpty()
   @IsArray()
-  medicalData: string[];
+  @IsOptional()
+  medicalData?: string[];
 
   @IsNumberString()
-  hasHeartDisease: number;
+  @IsOptional()
+  hasHeartDisease?: number;
 
   @IsBoolean()
-  isVerified: boolean;
+  @IsOptional()
+  isVerified?: boolean;
 
   @IsString()
+  @IsOptional()
   token?: string;
 }

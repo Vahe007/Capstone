@@ -7,7 +7,22 @@ import { User } from 'src/schemas/user.schemas';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  // constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+
+  private userModel
+
+  constructor() {
+    this.userModel = {
+      find: () => {console.log('found')},
+      create: ()=> {console.log('created')},
+      createUser: () => {console.log('createUser')},
+      findById: () => {console.log('findById')},
+      findByIdAndDelete: () => {console.log('findByIdAndDelete')},
+      findByIdAndUpdate: () => {console.log('findByIdAndUpdate')},
+      findOne: () => {console.log('findOne')},
+      save: () => {console.log('save')},
+    }
+  }
 
   async getUsers() {
     return this.userModel.find();

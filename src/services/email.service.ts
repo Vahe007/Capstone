@@ -6,6 +6,8 @@ import * as nodemailer from 'nodemailer';
 import { CreateUserDto } from 'src/dto/createUser.dto';
 import { Document } from 'mongoose';
 import { EMAIL_SUBJECT, emailSubject } from 'src/utils';
+import * as fs from 'fs';
+import path from 'path';
 
 @Injectable()
 export class EmailService {
@@ -33,6 +35,10 @@ export class EmailService {
     });
   }
 
+  private renderTemplate(template: string, variables: Record<string, string>): string {
+    return template.replace(/{{(.*?)}}/g, (_, key) => variables[key.trim()] || '');
+  }
+
   async sendEmail(
     email: string,
     token: string,
@@ -40,12 +46,16 @@ export class EmailService {
   ): Promise<void> {
     // Generating and sending a verification email
     const verificationUrl = `http://localhost:3000/verify-email?token=${token}`;
+    const filePath = path.join(process.cwd(), 'src', 'view', "resetPassword.html");
+    const html = fs.readFileSync(filePath, 'utf-8')
+    const template = this.renderTemplate(html, {name: 'Raffi', verificationUrl})
 
     const mailOptions = {
-      from: this.hostEmail,
+      from: `"Healthcare" <${this.hostEmail}>`,
       to: email,
-      subject: emailSubject[subject],
-      html: `Please click the following link to verify your email: <a href="${verificationUrl}">${verificationUrl}</a>`,
+      sub: emailSubject[subject],
+      // subject: emailSubject[subject],
+      html: template,
     };
 
     this.emailTransporter.sendMail(mailOptions);
@@ -57,8 +67,6 @@ export class EmailService {
     if (!user) {
       throw new HttpException('Unable to verify the account', 400);
     }
-
-    console.log('JWT secret is ', this.jwtSecret);
 
     const isValid = this.jwtService.verify(token, {
       secret: this.jwtSecret,
