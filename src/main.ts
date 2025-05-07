@@ -42,7 +42,7 @@ async function bootstrap() {
   // await app.listen(port);
   await app.listen(port, '127.0.0.1');
 
-  console.log('app.getUrl', await app.getUrl())
+  console.log('app.getUrl', await app.getUrl());
   console.log(`Application is running on: ${await app.getUrl()}`);
   console.log(`API Documentation available at: ${await app.getUrl()}/api-docs`);
 }

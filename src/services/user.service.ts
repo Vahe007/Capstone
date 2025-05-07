@@ -9,19 +9,35 @@ import { User } from 'src/schemas/user.schemas';
 export class UserService {
   // constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  private userModel
+  private userModel;
 
   constructor() {
     this.userModel = {
-      find: () => {console.log('found')},
-      create: ()=> {console.log('created')},
-      createUser: () => {console.log('createUser')},
-      findById: () => {console.log('findById')},
-      findByIdAndDelete: () => {console.log('findByIdAndDelete')},
-      findByIdAndUpdate: () => {console.log('findByIdAndUpdate')},
-      findOne: () => {console.log('findOne')},
-      save: () => {console.log('save')},
-    }
+      find: () => {
+        console.log('found');
+      },
+      create: () => {
+        console.log('created');
+      },
+      createUser: () => {
+        console.log('createUser');
+      },
+      findById: () => {
+        console.log('findById');
+      },
+      findByIdAndDelete: () => {
+        console.log('findByIdAndDelete');
+      },
+      findByIdAndUpdate: () => {
+        console.log('findByIdAndUpdate');
+      },
+      findOne: () => {
+        console.log('findOne');
+      },
+      save: () => {
+        console.log('save');
+      },
+    };
   }
 
   async getUsers() {

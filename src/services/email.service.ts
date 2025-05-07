@@ -35,8 +35,14 @@ export class EmailService {
     });
   }
 
-  private renderTemplate(template: string, variables: Record<string, string>): string {
-    return template.replace(/{{(.*?)}}/g, (_, key) => variables[key.trim()] || '');
+  private renderTemplate(
+    template: string,
+    variables: Record<string, string>,
+  ): string {
+    return template.replace(
+      /{{(.*?)}}/g,
+      (_, key) => variables[key.trim()] || '',
+    );
   }
 
   async sendEmail(
@@ -46,9 +52,17 @@ export class EmailService {
   ): Promise<void> {
     // Generating and sending a verification email
     const verificationUrl = `http://localhost:3000/verify-email?token=${token}`;
-    const filePath = path.join(process.cwd(), 'src', 'view', "resetPassword.html");
-    const html = fs.readFileSync(filePath, 'utf-8')
-    const template = this.renderTemplate(html, {name: 'Raffi', verificationUrl})
+    const filePath = path.join(
+      process.cwd(),
+      'src',
+      'view',
+      'resetPassword.html',
+    );
+    const html = fs.readFileSync(filePath, 'utf-8');
+    const template = this.renderTemplate(html, {
+      name: 'Raffi',
+      verificationUrl,
+    });
 
     const mailOptions = {
       from: `"Healthcare" <${this.hostEmail}>`,

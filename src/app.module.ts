@@ -5,9 +5,12 @@ import { UsersModule } from './modules/users.module';
 import { AuthModule } from './modules/auth.module';
 import configuration from './config/configuration';
 import { EmailModule } from './modules/email.module';
+import { InitialDiagnosisModule } from './modules/initialDiagnosis.module';
+import { ModelPredicitonController } from './controllers/modelPrediction.controller';
+import { ModelPredictionModule } from './modules/modelPrediction.module';
 
-
-const uri = 'mongodb+srv://tempUser:CqDfoM8OpkaVOocs@capstonecluster.2inb2s6.mongodb.net/medicalDB?retryWrites=true&w=majority&appName=CapstoneCluster'
+const uri =
+  'mongodb+srv://tempUser:CqDfoM8OpkaVOocs@capstonecluster.2inb2s6.mongodb.net/medicalDB?retryWrites=true&w=majority&appName=CapstoneCluster';
 @Module({
   imports: [
     // MongooseModule.forRoot(uri),
@@ -29,15 +32,13 @@ const uri = 'mongodb+srv://tempUser:CqDfoM8OpkaVOocs@capstonecluster.2inb2s6.mon
     UsersModule,
     AuthModule,
     EmailModule,
+    InitialDiagnosisModule,
+    ModelPredictionModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '../.env',
       load: [configuration],
     }),
-
-    // MongooseModule.forRoot('mongodb+srv://vmanukyan:randompassword777@cluster0.ue0jfgp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),
-
-
   ],
 })
 export class AppModule {}

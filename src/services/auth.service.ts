@@ -11,7 +11,7 @@ import { CreateUserDto } from 'src/dto/createUser.dto';
 import { EmailService } from './email.service';
 import { ConfigService } from '@nestjs/config';
 import { ChangePasswordDto } from 'src/dto/changePassword.dto';
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
