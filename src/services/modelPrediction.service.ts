@@ -38,8 +38,8 @@ export class ModelPredictionService {
   }
 
   async saveMLDiagnosis(
-    userId: Types.ObjectId,
-    requestInput: Record<string, string | number>,
+    userId: Types.ObjectId | string,
+    requestInput: FeaturesDto,
     modelName: string,
     predictionResult: number,
   ) {
