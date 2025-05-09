@@ -1,50 +1,26 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Document, Model, RootFilterQuery, UpdateQuery } from 'mongoose';
+import {
+  Document,
+  Model,
+  ObjectId,
+  RootFilterQuery,
+  UpdateQuery,
+} from 'mongoose';
 import { CreateUserDto } from 'src/dto/createUser.dto';
 import { UpdateUserDto } from 'src/dto/updateUser.dto';
-import { User } from 'src/schemas/user.schemas';
+import { User, UserDocument } from 'src/schemas/user.schemas';
 
 @Injectable()
 export class UserService {
-  // constructor(@InjectModel(User.name) private userModel: Model<User>) {}
-
-  private userModel;
-
-  constructor() {
-    this.userModel = {
-      find: () => {
-        console.log('found');
-      },
-      create: () => {
-        console.log('created');
-      },
-      createUser: () => {
-        console.log('createUser');
-      },
-      findById: () => {
-        console.log('findById');
-      },
-      findByIdAndDelete: () => {
-        console.log('findByIdAndDelete');
-      },
-      findByIdAndUpdate: () => {
-        console.log('findByIdAndUpdate');
-      },
-      findOne: () => {
-        console.log('findOne');
-      },
-      save: () => {
-        console.log('save');
-      },
-    };
-  }
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
   async getUsers() {
     return this.userModel.find();
   }
 
   async createUser(createUserDto: CreateUserDto) {
+    console.log('create user dto', createUserDto);
     const newUser = await this.userModel.create(createUserDto);
     return newUser.save();
   }
@@ -57,7 +33,7 @@ export class UserService {
     return this.userModel.findByIdAndDelete(id);
   }
 
-  async updateUser(id: string, updateUserDto: UpdateQuery<UpdateUserDto>) {
+  async updateUser(id: ObjectId, updateUserDto: UpdateQuery<UpdateUserDto>) {
     return this.userModel.findByIdAndUpdate(id, updateUserDto);
   }
 
@@ -65,13 +41,8 @@ export class UserService {
     return this.userModel.findOne(query);
   }
 
-  async findUserBy(query: RootFilterQuery<User>): Promise<User> {
-    const user = await this.userModel.findOne(query).exec();
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    return user;
+  async findUserBy(query: RootFilterQuery<User>): Promise<UserDocument | null> {
+    return await this.userModel.findOne(query).exec();
   }
 
   // create a general query for finding a user with all possible queries

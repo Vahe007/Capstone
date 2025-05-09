@@ -39,10 +39,11 @@ export class EmailService {
     template: string,
     variables: Record<string, string>,
   ): string {
-    return template.replace(
-      /{{(.*?)}}/g,
-      (_, key) => variables[key.trim()] || '',
-    );
+    console.log('variables are', variables);
+    return template.replace(/{{(.*?)}}/g, (_, key) => {
+      console.log('key is', key);
+      return variables[key.trim()] || '';
+    });
   }
 
   async sendEmail(
@@ -52,11 +53,14 @@ export class EmailService {
   ): Promise<void> {
     // Generating and sending a verification email
     const verificationUrl = `http://localhost:3000/verify-email?token=${token}`;
+    console.log('verificationUrl', verificationUrl);
     const filePath = path.join(
       process.cwd(),
       'src',
       'view',
-      'resetPassword.html',
+      subject === EMAIL_SUBJECT.verify
+        ? 'verifyEmail.html'
+        : 'resetPassword.html',
     );
     const html = fs.readFileSync(filePath, 'utf-8');
     const template = this.renderTemplate(html, {
@@ -75,37 +79,37 @@ export class EmailService {
     this.emailTransporter.sendMail(mailOptions);
   }
 
-  async verifyEmail(token: string) {
-    const user = await this.userService.findUser({ token });
-
-    if (!user) {
-      throw new HttpException('Unable to verify the account', 400);
-    }
-
-    const isValid = this.jwtService.verify(token, {
-      secret: this.jwtSecret,
-    });
-
-    const decoded = this.jwtService.decode(token);
-
-    console.log('isValid', isValid);
-    console.log('decoded jwt token for email verification', decoded);
-
-    if (!isValid) {
-      throw new HttpException('Token is expired', 400);
-    }
-
-    return this.userService.updateUser(user.id, {
-      $unset: {
-        token: 1,
-      },
-      $set: {
-        isVerified: true,
-      },
-    });
-  }
-
   async generateToken(payload) {
     return this.jwtService.sign(payload);
   }
+
+  // async verifyEmail(token: string) {
+  //   const user = await this.userService.findUser({ token });
+
+  //   if (!user) {
+  //     throw new HttpException('Unable to verify the account', 400);
+  //   }
+
+  //   const isValid = this.jwtService.verify(token, {
+  //     secret: this.jwtSecret,
+  //   });
+
+  //   const decoded = this.jwtService.decode(token);
+
+  //   console.log('isValid', isValid);
+  //   console.log('decoded jwt token for email verification', decoded);
+
+  //   if (!isValid) {
+  //     throw new HttpException('Token is expired', 400);
+  //   }
+
+  //   return this.userService.updateUser(user.id, {
+  //     $unset: {
+  //       token: 1,
+  //     },
+  //     $set: {
+  //       isVerified: true,
+  //     },
+  //   });
+  // }
 }

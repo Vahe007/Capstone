@@ -1,5 +1,13 @@
 import { Type } from 'class-transformer';
-import { IsInt, Min, Max, IsDefined, IsNumber, IsObject, ValidateNested } from 'class-validator';
+import {
+  IsInt,
+  Min,
+  Max,
+  IsDefined,
+  IsNumber,
+  IsObject,
+  ValidateNested,
+} from 'class-validator';
 
 export class FeaturesDto {
   @IsDefined() @IsInt() @Min(0) age: number;
@@ -29,5 +37,5 @@ export class ModelPredictionResponseDto {
   prediction: number;
   model_name?: string;
   interaction_id?: string;
+  dataSaved: boolean;
 }
-

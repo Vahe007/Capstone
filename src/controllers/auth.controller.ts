@@ -8,10 +8,12 @@ import {
   Post,
   HttpCode,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { CreateUserDto } from 'src/dto/createUser.dto';
 import { SignInUserDto } from 'src/dto/loginUse.dto';
 import { JwtEmailGuard } from 'src/guards/jwt-email.guard';
+import { Public } from 'src/decorators';
 
 @Controller('auth')
 export class AuthController {
@@ -41,7 +43,7 @@ export class AuthController {
   @UsePipes(new ValidationPipe())
   @HttpCode(200)
   @UseGuards(JwtEmailGuard)
-  async verifyAccount(@Body() data) {
-    // const {email, token} = data;
+  async verifyAccount(@Query() token: string) {
+    return await this.authSerivce.verifyAccount(token);
   }
 }

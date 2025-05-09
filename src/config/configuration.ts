@@ -22,5 +22,6 @@ export default () => {
     jwt_secret: process.env.JWT_SECRET,
     host_email: process.env.HOST_EMAIL,
     host_pass: process.env.HOST_PASS,
+    diagnosis_ml_url: process.env.DIAGNOSIS_ML_URL,
   };
 };

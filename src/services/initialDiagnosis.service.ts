@@ -16,18 +16,17 @@ export class InitialDiagnosisService {
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
   ) {
-    this.aiDiagnosisApiUrl = this.configService.get<string>(
-      'AI_DIAGNOSIS_FASTAPI_URL',
-    )!;
+    this.aiDiagnosisApiUrl =
+      this.configService.get<string>('diagnosis_ml_url')!;
     if (!this.aiDiagnosisApiUrl) {
-      throw new Error('AI_DIAGNOSIS_FASTAPI_URL is not configured.');
+      throw new Error('diagnosis_ml_url is not configured.');
     }
   }
 
   async getInitialDiagnosis(
     requestDto: InitialDiagnosisRequestDto,
   ): Promise<InitialDiagnosisResponseDto> {
-    const endpointUrl = `${this.aiDiagnosisApiUrl}/diagnose/initial`;
+    const endpointUrl = `${this.aiDiagnosisApiUrl}/initialDiagnosis`;
 
     try {
       const requestBody = { freestyle_text: requestDto.freestyle_text };
@@ -41,6 +40,8 @@ export class InitialDiagnosisService {
           },
         ),
       );
+
+      console.log('response from the initial diagnosis', response);
 
       if (
         response.status === 200 &&

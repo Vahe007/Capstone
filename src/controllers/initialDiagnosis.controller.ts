@@ -8,18 +8,20 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Public } from 'src/decorators';
 import {
   InitialDiagnosisRequestDto,
   InitialDiagnosisResponseDto,
 } from 'src/dto/initialDiagnosis.dto';
 import { InitialDiagnosisService } from 'src/services/initialDiagnosis.service';
 
-@Controller('openai')
+@Controller('initialDiagnosis')
 export class InitialDiagnosisController {
   constructor(
     private readonly initialDiagnosisService: InitialDiagnosisService,
   ) {}
 
+  @Public()
   @Post()
   @HttpCode(HttpStatus.OK)
   @UsePipes(

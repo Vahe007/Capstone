@@ -17,14 +17,12 @@ export class JwtEmailGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const req: Request = context.switchToHttp().getRequest();
-
-    console.log('req for the Jwt verify email guard', req);
     const token = req.body?.token || req.query?.token;
 
     try {
       const secret = this.configService.get<string>('jwt_secret');
       const payload = this.jwtService.verify(token, { secret });
-      // optionally attach to request for later use
+      // attaching the emailpayload for a later use
       (req as any).emailPayload = payload;
       return true;
     } catch (err) {

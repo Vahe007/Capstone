@@ -1,7 +1,9 @@
 import { EMAIL_SUBJECT } from 'src/utils';
 import {
+  ConflictException,
   HttpException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { SignInUserDto } from 'src/dto/loginUse.dto';
@@ -12,6 +14,8 @@ import { EmailService } from './email.service';
 import { ConfigService } from '@nestjs/config';
 import { ChangePasswordDto } from 'src/dto/changePassword.dto';
 import bcrypt from 'bcrypt';
+import { UserDocument } from 'src/schemas/user.schemas';
+import { ObjectId } from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -55,24 +59,38 @@ export class AuthService {
   async register(data: CreateUserDto) {
     const { password, ...resetData } = data;
 
+    console.log('poin');
+
+    const existingUser = await this.userService.findUserBy({
+      $or: [{ email: resetData.email }, { userName: resetData.userName }],
+    });
+
+    if (existingUser) {
+      throw new ConflictException(
+        'User with provided credentials already exists',
+      );
+    }
+
     const passwordHash = await bcrypt.hash(password, 10);
 
     const emailToken = this.jwtService.sign({
       email: data.email,
     });
 
-    // const user = await this.userService.createUser({
-    //   password: passwordHash,
-    //   token: emailToken,
-    //   ...resetData,
-    //   isVerified: false,
-    // });
+    const user = await this.userService.createUser({
+      password: passwordHash,
+      token: emailToken,
+      ...resetData,
+      isVerified: false,
+    });
 
-    // if (!user) {
-    //   throw new HttpException('User creation failed', 404);
-    // }
+    console.log('user after the registration', user);
 
-    this.emailService.sendEmail(data.email, emailToken, EMAIL_SUBJECT.verify);
+    if (!user) {
+      throw new HttpException('User creation failed', 404);
+    }
+
+    // this.emailService.sendEmail(data.email, emailToken, EMAIL_SUBJECT.verify);
   }
 
   // async verifyEmail({ email, token, subject }) {
@@ -132,22 +150,45 @@ export class AuthService {
       throw new HttpException('Password reset failed', 404);
     }
 
-    const id = user?.id;
+    const userId = (user as UserDocument & { _id: ObjectId })._id;
 
     const newPasswordHash = await bcrypt.hash(newPassword, 10);
 
-    if (user?.passwordHash === newPasswordHash) {
+    if (user.password === newPasswordHash) {
       throw new HttpException('Password reset failed', 404);
     }
 
     // Check needs to be added in here
     // To check if the new password is not matching to old one
-    await this.userService.updateUser(id, {
+    await this.userService.updateUser(userId, {
       $unset: {
         token: 1,
       },
       $set: {
         passwordHash: newPasswordHash,
+      },
+    });
+  }
+
+  async verifyAccount(token: string) {
+    const user = await this.userService.findUserBy({ token });
+
+    console.log('user to verify is', user);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const userId = (user as UserDocument & { _id: ObjectId })._id;
+
+    console.log('userid is', userId);
+
+    this.userService.updateUser(userId, {
+      $unset: {
+        token: 1,
+      },
+      $set: {
+        isVerified: true,
       },
     });
   }
