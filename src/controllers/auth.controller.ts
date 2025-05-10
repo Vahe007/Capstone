@@ -19,18 +19,21 @@ import { Public } from 'src/decorators';
 export class AuthController {
   constructor(private authSerivce: AuthService) {}
 
+  @Public()
   @Post('login')
   @UsePipes(new ValidationPipe())
   async login(@Body() signInUserDto: SignInUserDto) {
     return this.authSerivce.signIn(signInUserDto);
   }
 
+  @Public()
   @Post('register')
   @UsePipes(new ValidationPipe())
   async register(@Body() createUserDto: CreateUserDto) {
     return this.authSerivce.register(createUserDto);
   }
 
+  @Public()
   @Post('changePassword')
   @UsePipes(new ValidationPipe())
   @HttpCode(200)

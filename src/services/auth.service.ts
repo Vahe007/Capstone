@@ -38,19 +38,19 @@ export class AuthService {
 
     const { userName, password } = data;
 
-    const user = await this.userService.findUser(userName);
+    const user = await this.userService.findUserBy({ userName });
 
     if (!user) {
       throw new HttpException('User not found', 404);
     }
 
-    const isPasswordMatching = await bcrypt.compare(password, password);
+    const isPasswordMatching = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatching) {
       throw new UnauthorizedException();
     }
 
-    const payload = { sub: user.id, username: user.userName };
+    const payload = { sub: user._id, username: user.userName };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
@@ -58,8 +58,6 @@ export class AuthService {
 
   async register(data: CreateUserDto) {
     const { password, ...resetData } = data;
-
-    console.log('poin');
 
     const existingUser = await this.userService.findUserBy({
       $or: [{ email: resetData.email }, { userName: resetData.userName }],
@@ -90,7 +88,16 @@ export class AuthService {
       throw new HttpException('User creation failed', 404);
     }
 
-    // this.emailService.sendEmail(data.email, emailToken, EMAIL_SUBJECT.verify);
+    await this.emailService.sendEmail(
+      data.email,
+      emailToken,
+      EMAIL_SUBJECT.verify,
+    );
+
+    const payload = { sub: user.id, username: user.userName };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 
   // async verifyEmail({ email, token, subject }) {

@@ -17,9 +17,6 @@ export class Diagnosis {
   @Prop({ type: SchemaTypes.Mixed, required: true })
   requestInput: Record<string, string | number>;
 
-  @Prop({ required: true, type: String, default: null })
-  initialDiagnosisResult: string | null;
-
   @Prop({ requried: true, type: String, default: null })
   mlModelUsed: string | null;
 
@@ -28,6 +25,9 @@ export class Diagnosis {
 
   @Prop({ type: String, default: null })
   errorMessage?: string;
+
+  // @Prop({ required: true, type: String, default: null })
+  // initialDiagnosisResult?: string | null;
 
   // @Prop({ required: true, enum: ['processing', 'completed', 'failed'], default: 'processing' })
   // status: string;

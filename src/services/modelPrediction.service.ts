@@ -1,7 +1,8 @@
+import { UserService } from './user.service';
 import {
-  HttpException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
@@ -22,6 +23,7 @@ export class ModelPredictionService {
   constructor(
     @InjectModel(Diagnosis.name)
     private diagnosisModel: Model<DiagnosisDocument>,
+    private userService: UserService,
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
   ) {
@@ -49,21 +51,30 @@ export class ModelPredictionService {
         requestInput: requestInput,
         mlModelUsed: modelName,
         mlPredictionResult: predictionResult,
-        initialDiagnosisResult: null,
+        // initialDiagnosisResult: null,
       });
 
       return newDiagnosisEntry.save();
     } catch (error) {
+      console.log('error is error w', error);
       return null;
     }
   }
 
   async predictFromFeatures(
+    payload: Record<string, any>,
     features: FeaturesDto,
     modelType: string,
   ): Promise<ModelPredictionResponseDto> {
     const endpointUrl = `${this.customModelFastApiUrl}/predict/${modelType}`;
     try {
+      const userId = payload.sub;
+      const user = await this.userService.findUserBy({ _id: userId });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
       const requestBody = { features };
 
       const response = await firstValueFrom(
@@ -83,7 +94,7 @@ export class ModelPredictionService {
       ) {
         // saving the diagnosis result entry
         const dataSaved = !!(await this.saveMLDiagnosis(
-          'userId',
+          userId,
           features,
           modelType,
           response.data.prediction,

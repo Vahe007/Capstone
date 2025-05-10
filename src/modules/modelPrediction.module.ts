@@ -5,14 +5,14 @@ import { ModelPredicitonController } from 'src/controllers/modelPrediction.contr
 import { HttpModule } from '@nestjs/axios';
 import { Diagnosis, DiagnosisSchema } from 'src/schemas/diagnosis.schemas';
 import { MongooseModule } from '@nestjs/mongoose';
-import { JwtModule, JwtService } from '@nestjs/jwt';
-import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { JwtModule } from '@nestjs/jwt';
+import { UsersModule } from './users.module';
 
 @Module({
   imports: [
     ConfigModule,
     HttpModule,
+    UsersModule,
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => {
         const jwtSecret = configService.get('jwt_secret');
@@ -32,13 +32,7 @@ import { AuthGuard } from 'src/guards/auth.guard';
       },
     ]),
   ],
-  providers: [
-    ModelPredictionService
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthGuard,
-    // },
-  ],
+  providers: [ModelPredictionService],
   controllers: [ModelPredicitonController],
 })
 export class ModelPredictionModule {}

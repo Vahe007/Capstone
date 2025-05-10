@@ -58,6 +58,6 @@ import { JwtModule } from '@nestjs/jwt';
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
-  ]
+  ],
 })
 export class AppModule {}
