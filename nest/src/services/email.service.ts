@@ -53,7 +53,6 @@ export class EmailService {
   ): Promise<void> {
     // Generating and sending a verification email
     const verificationUrl = `http://localhost:3000/verify-email?token=${token}`;
-    console.log('verificationUrl', verificationUrl);
     const filePath = path.join(
       process.cwd(),
       'src',
