@@ -3,6 +3,7 @@ import {
   ConflictException,
   HttpException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -33,7 +34,7 @@ export class AuthService {
     );
   }
 
-  async signIn(data: SignInUserDto): Promise<{ access_token: string }> {
+  async signIn(data: SignInUserDto): Promise<{ access_token: string, userInfo: Record<string, any> }> {
     this.jwtSecret = this.configService.get('jwt_secret')!;
 
     const { userName, password } = data;
@@ -47,12 +48,17 @@ export class AuthService {
     const isPasswordMatching = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatching) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Invalid credentials');
     }
+    const {password: _, ...userInfo} = user;
 
-    const payload = { sub: user._id, username: user.userName };
+    console.log('userinfo is', userInfo)
+
+    const payload = {sub: userInfo._id, ...userInfo};
+
     return {
       access_token: await this.jwtService.signAsync(payload),
+      userInfo,
     };
   }
 
@@ -62,6 +68,8 @@ export class AuthService {
     const existingUser = await this.userService.findUserBy({
       $or: [{ email: resetData.email }, { userName: resetData.userName }],
     });
+
+    console.log('existingUser', existingUser)
 
     if (existingUser) {
       throw new ConflictException(
@@ -75,29 +83,46 @@ export class AuthService {
       email: data.email,
     });
 
-    const user = await this.userService.createUser({
-      password: passwordHash,
-      token: emailToken,
-      ...resetData,
-      isVerified: false,
-    });
+    try {
+      const user = await this.userService.createUser({
+        password: passwordHash,
+        token: emailToken,
+        ...resetData,
+        isVerified: false,
+      });
+  
+      console.log('user after the registration', user);
+  
+      if (!user) {
+        throw new HttpException('User creation failed', 404);
+      }
+  
+      await this.emailService.sendEmail(
+        data.firstName,
+        data.email,
+        emailToken,
+        EMAIL_SUBJECT.verify,
+      );
 
-    console.log('user after the registration', user);
+      const {password: _, ...userInfo} = user;
 
-    if (!user) {
-      throw new HttpException('User creation failed', 404);
+      const payload = {sub: userInfo._id, ...userInfo};
+
+      console.log('userobject is', userInfo)
+
+      return {
+        access_token: await this.jwtService.signAsync(payload),
+        userInfo,
+        message: 'Registration successful. Please check your email to verify your account.',
+      };
+    } catch(error) {
+      if (error instanceof ConflictException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('User registration failed due to an internal error.');
     }
 
-    await this.emailService.sendEmail(
-      data.email,
-      emailToken,
-      EMAIL_SUBJECT.verify,
-    );
 
-    const payload = { sub: user.id, username: user.userName };
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
   }
 
   // async verifyEmail({ email, token, subject }) {
@@ -147,7 +172,7 @@ export class AuthService {
       email,
     });
 
-    this.emailService.sendEmail(user.email, token, EMAIL_SUBJECT.reset);
+    await this.emailService.sendEmail(user.firstName, user.email, token, EMAIL_SUBJECT.reset);
   }
 
   async changePassword({ token, newPassword }: ChangePasswordDto) {

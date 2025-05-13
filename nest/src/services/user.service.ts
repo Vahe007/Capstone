@@ -22,10 +22,12 @@ export class UserService {
   async createUser(createUserDto: CreateUserDto) {
     console.log('create user dto', createUserDto);
     const newUser = await this.userModel.create(createUserDto);
-    return newUser.save();
+    await newUser.save()
+    return newUser.toObject()
   }
 
   async getUserById(id: string) {
+    console.log('this.userModel.findById(id)', this.userModel.findById(id))
     return this.userModel.findById(id);
   }
 
@@ -42,6 +44,7 @@ export class UserService {
   }
 
   async findUserBy(query: RootFilterQuery<User>): Promise<UserDocument | null> {
+    console.log('await this.userModel.findOne(query).exec();', await this.userModel.findOne(query).exec())
     return await this.userModel.findOne(query).exec();
   }
 

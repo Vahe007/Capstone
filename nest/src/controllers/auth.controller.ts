@@ -22,6 +22,7 @@ export class AuthController {
   @Public()
   @Post('login')
   @UsePipes(new ValidationPipe())
+  @HttpCode(200)
   async login(@Body() signInUserDto: SignInUserDto) {
     return this.authSerivce.signIn(signInUserDto);
   }
@@ -29,6 +30,7 @@ export class AuthController {
   @Public()
   @Post('register')
   @UsePipes(new ValidationPipe())
+  @HttpCode(201)
   async register(@Body() createUserDto: CreateUserDto) {
     return this.authSerivce.register(createUserDto);
   }

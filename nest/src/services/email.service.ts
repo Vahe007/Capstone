@@ -47,6 +47,7 @@ export class EmailService {
   }
 
   async sendEmail(
+    name: string,
     email: string,
     token: string,
     subject: EMAIL_SUBJECT,
@@ -63,7 +64,7 @@ export class EmailService {
     );
     const html = fs.readFileSync(filePath, 'utf-8');
     const template = this.renderTemplate(html, {
-      name: 'Raffi',
+      name,
       verificationUrl,
     });
 
@@ -75,7 +76,9 @@ export class EmailService {
       html: template,
     };
 
-    this.emailTransporter.sendMail(mailOptions);
+    await this.emailTransporter.sendMail(mailOptions);
+
+    console.log('email sent')
   }
 
   async generateToken(payload) {
