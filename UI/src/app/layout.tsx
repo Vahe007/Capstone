@@ -1,12 +1,4 @@
-// import { ReactNode } from "react"
-
-// type Props = {
-//   children: ReactNode
-// }
-
-// export default function RootLayout({children}: Props) {
-//   return children
-// }
+import "./global.css";
 
 export default function RootLayout({
   children,
@@ -24,8 +16,7 @@ export default function RootLayout({
         />
       </head>
       <body>
-        {/* Layout UI */}
-        {/* Place children where you want to render a page or nested layout */}
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <main>{children}</main>
       </body>
     </html>

@@ -2,13 +2,16 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { z, ZodError } from "zod";
 import { SignupSchema } from "@/schemas/Auth.schema";
+import Cookies from "js-cookie";
 
 type SignupFormValues = z.infer<typeof SignupSchema>;
 
 const SignupForm: React.FC = () => {
+  const router = useRouter();
   const [submitMessage, setSubmitMessage] = useState("");
   const [submitError, setSubmitError] = useState(false);
 
@@ -16,17 +19,50 @@ const SignupForm: React.FC = () => {
     values: SignupFormValues,
     {
       setSubmitting,
-      resetForm,
     }: {
       setSubmitting: (isSubmitting: boolean) => void;
-      resetForm: () => void;
     },
   ) => {
-    setSubmitMessage("");
+    setSubmitting(true);
     setSubmitError(false);
     setSubmitMessage("Creating account...");
 
-    console.log("values are", values);
+    try {
+      const { confirmPassword, terms, ...payload } = values;
+
+      const response = await fetch("/api/account/register", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (data?.error) {
+        setSubmitError(true);
+        setSubmitMessage(data.error);
+        setSubmitting(false);
+        return;
+      }
+
+      if (data?.access_token) {
+        Cookies.set("accessToken", data.access_token, {
+          expires: 0.0208,
+        });
+
+        if (data?.userInfo?.isVerified) {
+          router.push("/prediction-analysis");
+        } else {
+          router.push("/unverified");
+        }
+      }
+
+      setSubmitting(false);
+      setSubmitMessage("");
+    } catch {
+      setSubmitError(true);
+      setSubmitMessage("Error");
+      setSubmitting(false);
+    }
   };
 
   const validateForm = (values: SignupFormValues) => {
@@ -66,6 +102,7 @@ const SignupForm: React.FC = () => {
             firstName: "",
             lastName: "",
             email: "",
+            userName: "",
             password: "",
             confirmPassword: "",
             terms: false,
@@ -123,6 +160,22 @@ const SignupForm: React.FC = () => {
                 <label htmlFor="email">Email address</label>
                 <ErrorMessage
                   name="email"
+                  component="div"
+                  className="invalid-feedback"
+                />
+              </div>
+
+              <div className="form-floating mb-3">
+                <Field
+                  type="text"
+                  name="userName"
+                  placeholder="name_surname"
+                  className={`form-control ${errors.userName && touched.userName ? "is-invalid" : ""}`}
+                  id="userName"
+                />
+                <label htmlFor="email">Username</label>
+                <ErrorMessage
+                  name="userName"
                   component="div"
                   className="invalid-feedback"
                 />

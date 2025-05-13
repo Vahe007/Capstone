@@ -14,8 +14,17 @@ export const password = z
     message: "Password must contain at least one special character.",
   });
 
+export const userName = z
+  .string()
+  .min(3, "Username must be at least 3 characters")
+  .max(30, "Username must be at most 30 characters")
+  .regex(
+    /^[a-zA-Z0-9_]+$/,
+    "Username can only contain letters, numbers, and underscores",
+  );
+
 export const LoginSchema = z.object({
-  email,
+  userName,
   password,
   rememberMe: z.boolean().optional(),
 });
@@ -25,6 +34,7 @@ export const SignupSchema = z
     firstName: z.string().min(1, { message: "First name is required." }),
     lastName: z.string().min(1, { message: "Last name is required." }),
     email,
+    userName,
     password,
     confirmPassword: z
       .string()
