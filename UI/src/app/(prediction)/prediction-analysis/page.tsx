@@ -1,6 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
-import ModelPrediction from "@/components/prediction/MainPrediction";
+import ModelPrediction from "@/components/prediction/model-prediction/MainPrediction";
 
 export const metadata: Metadata = {
   title: "Sign Up - HealthApp",

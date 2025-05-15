@@ -7,11 +7,13 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { z, ZodError } from "zod";
 import { SignupSchema } from "@/schemas/Auth.schema";
 import Cookies from "js-cookie";
+import { useUserSession } from "@/providers/userSessionProvider/UserSessionProvider";
 
 type SignupFormValues = z.infer<typeof SignupSchema>;
 
 const SignupForm: React.FC = () => {
   const router = useRouter();
+  const { setUser } = useUserSession();
   const [submitMessage, setSubmitMessage] = useState("");
   const [submitError, setSubmitError] = useState(false);
 
@@ -48,6 +50,8 @@ const SignupForm: React.FC = () => {
         Cookies.set("accessToken", data.access_token, {
           expires: 0.0208,
         });
+
+        setUser(data.user_info);
 
         if (data?.userInfo?.isVerified) {
           router.push("/prediction-analysis");

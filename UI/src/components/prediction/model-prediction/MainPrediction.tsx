@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import ModelSelector from "@/components/prediction/ModelSelector";
-import ManualInputForm from "@/components/prediction/ManualInputForm";
-import FileUploadForm from "@/components/prediction/FileUploadForm";
-import PredictionResults from "@/components/prediction/PredictionResults";
-import PerformanceVisuals from "@/components/prediction/PerformanceVisuals";
+import ModelSelector from "@/components/prediction/model-prediction/ModelSelector";
+import ManualInputForm from "@/components/prediction/model-prediction/ManualInputForm";
+import FileUploadForm from "@/components/prediction/model-prediction/FileUploadForm";
+import PredictionResults from "@/components/prediction/model-prediction/PredictionResults";
+import PerformanceVisuals from "@/components/prediction/model-prediction/PerformanceVisuals";
 
 declare var Chart: any;
 

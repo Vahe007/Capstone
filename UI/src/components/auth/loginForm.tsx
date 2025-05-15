@@ -7,11 +7,13 @@ import { useRouter } from "next/navigation";
 import { z, ZodError } from "zod";
 import { LoginSchema, userName } from "@/schemas/Auth.schema";
 import Cookies from "js-cookie";
+import { useUserSession } from "@/providers/userSessionProvider/UserSessionProvider";
 
 type LoginFormValues = z.infer<typeof LoginSchema>;
 
 const LoginForm: React.FC = () => {
   const router = useRouter();
+  const { setUser } = useUserSession();
   const [submitMessage, setSubmitMessage] = useState("");
   const [submitError, setSubmitError] = useState(false);
 
@@ -31,7 +33,6 @@ const LoginForm: React.FC = () => {
 
     try {
       const { userName, password } = values;
-      console.log("values", values);
       const response = await fetch("/api/account/login", {
         method: "POST",
         body: JSON.stringify({
@@ -54,11 +55,14 @@ const LoginForm: React.FC = () => {
           expires: 0.0208,
         });
 
+        setUser(data.userInfo);
+
         if (data?.userInfo?.isVerified) {
           router.push("/prediction-analysis");
         } else {
           router.push("/unverified");
         }
+        return;
       }
 
       setSubmitError(true);

@@ -1,3 +1,4 @@
+import { UserSessionProvider } from "@/providers/userSessionProvider/UserSessionProvider";
 import "./global.css";
 
 export default function RootLayout({
@@ -16,8 +17,10 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <main>{children}</main>
+        <UserSessionProvider>
+          <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+          <main>{children}</main>
+        </UserSessionProvider>
       </body>
     </html>
   );
