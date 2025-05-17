@@ -10,7 +10,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
     <div className="container-fluid vh-100 p-0">
       <div className="row g-0 h-100">
         <div className="col-md-6 d-none d-md-flex h-100">
-          <AuthImage imageUrl="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjNvL1bpCc1TLzeHMESmYakMcPaS3yI8Yh6g&s" />
+          <AuthImage imageUrl="https://img.freepik.com/free-vector/blue-hexagonal-medical-healthcare-background-design_1017-26836.jpg" />
         </div>
 
         <div className="col-md-6 d-flex flex-column justify-content-center align-items-center bg-light h-100 p-4 p-sm-5">

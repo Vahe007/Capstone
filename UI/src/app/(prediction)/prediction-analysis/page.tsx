@@ -7,6 +7,6 @@ export const metadata: Metadata = {
   description: "Create your HealthApp account.",
 };
 
-export default function SignupPage() {
+export default function ModelPredictionPage() {
   return <ModelPrediction />;
 }

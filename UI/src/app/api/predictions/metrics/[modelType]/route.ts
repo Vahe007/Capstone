@@ -3,17 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 const { API_URL } = process.env;
 
-export const POST = async (
+export const GET = async (
   req: NextRequest,
+  { params }: { params: { modelType: string } },
 ) => {
   try {
+    const { modelType } = params;
     const accessToken = await getCookie("accessToken");
-    const body = await req.json();
-    const {model_type, features} = body;
-
-    console.log("modelType inside the route is", model_type);
-    console.log("features inside the route is", features);
-    
 
     if (!API_URL) {
       return NextResponse.json(
@@ -27,14 +23,13 @@ export const POST = async (
     }
 
     const response = await fetch(
-      `${API_URL}/modelPrediction/${model_type}`,
+      `${API_URL}/modelPrediction/metrics/${modelType}`,
       {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({features}),
       },
     );
 
@@ -51,7 +46,7 @@ export const POST = async (
 
     return NextResponse.json(
       {
-        error: data?.message ?? 'Error',
+        error: "Error",
       },
       { status: 400 },
     );

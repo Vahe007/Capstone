@@ -30,11 +30,7 @@ export const POST = async (req: NextRequest) => {
       body: JSON.stringify(body),
     });
 
-    console.log("response from the api request", response);
-
     const data = await response.json();
-
-    console.log("data from the api request", data);
 
     if (response.status === 200) {
       return NextResponse.json(

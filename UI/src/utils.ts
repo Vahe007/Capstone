@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 
+
 const { JWT_SECRET } = process.env;
 
 export const getCookie = async (name: string) => {
@@ -23,3 +24,4 @@ export const getUserData = async () => {
     return null;
   }
 };
+

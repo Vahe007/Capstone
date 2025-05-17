@@ -1,15 +1,69 @@
 "use client";
-import React from "react";
+import React, { Dispatch, useState } from "react";
+import { Button } from "@/components/button/Button";
+import { FeaturesType, ModelPredicitonRequestInput } from "@/types";
+import * as XLSX from "xlsx";
+import { cleanRow } from "./utils";
 
 interface FileUploadFormProps {
   fileName: string;
   onFileChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  isLoading: boolean;
+  onSubmit: (input: ModelPredicitonRequestInput) => void;
+  model_type: string;
+  setIsLoading: Dispatch<boolean>;
+  setFileName: Dispatch<string>;
 }
 
 export default function FileUploadForm({
   fileName,
-  onFileChange,
+  isLoading,
+  onSubmit,
+  model_type,
+  setIsLoading,
+  setFileName,
 }: FileUploadFormProps) {
+  const [features, setFeatures] = useState<FeaturesType | null>(null);
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsLoading(true);
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target!.result as ArrayBuffer);
+      const workbook = XLSX.read(data, { type: "array" });
+  
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+
+      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+      if (Array.isArray(jsonData)) {
+        const cleanedData = cleanRow(jsonData[0] as Record<string, any>);
+        console.log('cleanedData', cleanedData)
+        setFeatures(cleanedData)
+      }
+  
+      setFileName(file.name);
+      setIsLoading(false);
+
+    };
+    reader.readAsArrayBuffer(file);
+    setIsLoading(false);
+  };
+
+  const handleSubmit = async () => {
+    if (features) {
+      onSubmit({
+        features,
+        model_type,
+      });
+    }
+  }
+
+
   return (
     <div className="tab-content active bg-white p-6 rounded-lg shadow-lg border border-slate-200">
       <h3 className="text-lg font-medium text-slate-700 mb-4">
@@ -53,10 +107,13 @@ export default function FileUploadForm({
             name="medicalFile"
             id="medicalFile"
             className="sr-only"
-            onChange={onFileChange}
+            onChange={handleFileUpload}
           />
         </div>
       </form>
+
+      <Button isLoading={isLoading} onClick={handleSubmit} type='submit' />
+
     </div>
   );
 }
