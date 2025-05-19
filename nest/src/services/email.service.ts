@@ -71,8 +71,7 @@ export class EmailService {
     const mailOptions = {
       from: `"Healthcare" <${this.hostEmail}>`,
       to: email,
-      sub: emailSubject[subject],
-      // subject: emailSubject[subject],
+      subject: emailSubject[subject],
       html: template,
     };
 

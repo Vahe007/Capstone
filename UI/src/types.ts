@@ -59,3 +59,15 @@ export type DiagnosisResult = {
   mlModelUsed: string;
   createdAt: string;
 };
+
+
+export type User = {
+  id: string;
+  email: string;
+  userName?: string;
+  firstName?: string;
+  lastName?: string;
+  medicalData?: string[];
+  hasHeartDisease?: number;
+  isVerified?: boolean;
+};

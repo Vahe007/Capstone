@@ -1,4 +1,4 @@
-import { ChangePasswordDto } from 'src/dto/changePassword.dto';
+import { RecoverPasswordDto, UpdatePasswordDto } from 'src/dto/changePassword.dto';
 import { AuthService } from './../services/auth.service';
 import {
   Body,
@@ -39,18 +39,31 @@ export class AuthController {
   }
 
   @Public()
-  @Post('changePassword')
+  @Post('recoverPassword')
   @UsePipes(new ValidationPipe())
   @HttpCode(200)
   @UseGuards(JwtEmailGuard)
-  async changePassword(@Req() req, @Body() body: ChangePasswordDto) {
+  async recoverPassword(@Req() req, @Body() body: RecoverPasswordDto) {
     const { token, password } = body;
-    console.log('request is request', req);
-    console.log('(req as any).emailPayload = payload;', req.payload.email);
-    return this.authSerivce.changePassword({
+    return this.authSerivce.recoverPassword({
       email: req.payload.email,
       password,
       token,
+    });
+  }
+
+  @Post('updatePassword')
+  @UsePipes(new ValidationPipe())
+  @HttpCode(200)
+  async updatePassword(@Req() req, @Body() body: UpdatePasswordDto) {
+      const payload = req['user'];
+      console.log('payload inside the controller is', payload.email)
+
+    const { oldPassword, newPassword } = body;
+    return this.authSerivce.updatePassword({
+      email: payload.email,
+      newPassword,
+      oldPassword,
     });
   }
 

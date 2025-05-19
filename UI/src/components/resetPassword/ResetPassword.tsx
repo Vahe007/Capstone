@@ -39,7 +39,7 @@ export default function ResetPassword() {
     }
 
     try {
-      const response = await fetch("/api/account/reset-password", {
+      const response = await fetch("/api/account/recover-password", {
         method: "POST",
         body: JSON.stringify({
           password: values.password,

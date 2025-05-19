@@ -14,10 +14,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from 'src/dto/createUser.dto';
 import { EmailService } from './email.service';
 import { ConfigService } from '@nestjs/config';
-import { ChangePasswordDto } from 'src/dto/changePassword.dto';
 import bcrypt from 'bcrypt';
-import { UserDocument } from 'src/schemas/user.schemas';
-import { ObjectId } from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -34,7 +31,7 @@ export class AuthService {
   async signIn(
     data: SignInUserDto,
   ): Promise<{ access_token: string; userInfo: Record<string, any> }> {
-    this.jwtSecret = this.configService.get('jwt_secret')!;
+    // this.jwtSecret = this.configService.get('jwt_secret')!;
 
     const { userName, password } = data;
 
@@ -182,7 +179,7 @@ export class AuthService {
     return { message: 'success' };
   }
 
-  async changePassword({
+  async recoverPassword({
     email,
     password,
     token,
@@ -232,6 +229,52 @@ export class AuthService {
     }
   }
 
+
+
+  async updatePassword({
+    email,
+    newPassword,
+    oldPassword,
+  }: {
+    email: string;
+    newPassword: string;
+    oldPassword: string;
+  }) {
+    try {
+      const user = await this.userService.findUserBy({ email });
+
+      if (!user) {
+        throw new BadRequestException('User not found');
+      }
+
+      const userId = user._id;
+      const isPasswordMatching = await bcrypt.compare(oldPassword, user.password);
+
+      if (!isPasswordMatching) {
+        throw new BadRequestException(
+          'Old password is not matching',
+        );
+      }
+
+      const newPasswordHash = await bcrypt.hash(newPassword, 10);
+
+      await this.userService.updateUser(userId!, {
+        set: {
+          password: newPasswordHash,
+        },
+        unset: ['token'],
+      });
+
+      return { message: 'success' };
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException();
+    }
+  }
+
   async verifyEmail(token: string) {
     try {
       const user = await this.userService.findUserBy({ token });
@@ -246,16 +289,22 @@ export class AuthService {
         throw new HttpException('Token is not valid or expired', 400);
       }
 
-      await this.userService.updateUser(userId!, {
+      const updatedUser = await this.userService.updateUser(userId!, {
         set: {
           isVerified: true,
         },
         unset: ['token'],
       });
 
-      console.log('should be successful');
+      if (updatedUser) {
+        const payload = { sub: updatedUser._id, ...updatedUser };
+        return {
+          access_token: await this.jwtService.signAsync(payload),
+          userInfo: updatedUser,
+        };
+      }
+      throw new InternalServerErrorException('Unexpected error');
 
-      return { success: true };
     } catch (error) {
       if (
         error instanceof NotFoundException ||
@@ -264,7 +313,7 @@ export class AuthService {
         throw error;
       }
 
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException('Unexpected error');
     }
   }
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCookie } from "@/utils";
+import { cookies } from "next/headers";
 
 const { API_URL } = process.env;
 
@@ -29,11 +30,10 @@ export const GET = async (req: NextRequest) => {
 
     const data = await response.json();
 
-    console.log("response is reponse", response);
-    console.log("data is data", data);
-
     if (response.status === 200) {
-      return NextResponse.json({ error: null, success: true }, { status: 200 });
+      const cookieStore = await cookies()
+      cookieStore.set('accessToken', data.access_token);
+      return NextResponse.json({ error: null, user: data.userInfo }, { status: 200 });
     }
 
     return NextResponse.json(

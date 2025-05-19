@@ -1,11 +1,21 @@
+'use client';
+
 import { UserSessionProvider } from "@/providers/userSessionProvider/UserSessionProvider";
+import GlobalHeader from "@/components/header/GlobalHeader";
+import { usePathname } from "next/navigation";
 import "./global.css";
+
+const hideHeaderRoutes = ['/login', '/sign-up', '/forgot-password', '/reset-password'];
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const shouldShowHeader = !hideHeaderRoutes.includes(pathname);
+ // create a layout wrapper
+ // and add that wrapper to the global layout
   return (
     <html lang="en">
       <head>
@@ -18,6 +28,7 @@ export default function RootLayout({
       </head>
       <body>
         <UserSessionProvider>
+          {shouldShowHeader && <GlobalHeader />}
           <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
           <main>{children}</main>
         </UserSessionProvider>

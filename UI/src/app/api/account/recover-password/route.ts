@@ -13,7 +13,7 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
-    const response = await fetch(`${API_URL}/auth/changePassword`, {
+    const response = await fetch(`${API_URL}/auth/recoverPassword`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -8,28 +8,21 @@ import React, {
   useEffect,
   useState,
 } from "react";
-
-type User = {
-  id: string;
-  email: string;
-  userName?: string;
-  firstName?: string;
-  lastName?: string;
-  medicalData?: string[];
-  hasHeartDisease?: number;
-  isVerified?: boolean;
-};
+import Cookies from "js-cookie";
+import { User } from "@/types";
 
 type UserSessionContextType = {
   user: User | null;
   setUser: Dispatch<SetStateAction<User | null>>;
   loading: boolean;
+  logout: () => void;
 };
 
 const UserSessionContext = createContext<UserSessionContextType>({
   user: null,
   loading: true,
   setUser: () => {},
+  logout: () => {},
 });
 
 export const UserSessionProvider = ({
@@ -56,8 +49,13 @@ export const UserSessionProvider = ({
     fetchUser();
   }, []);
 
+  const logout = () => {
+    Cookies.remove('accessToken');
+    setUser(null);
+  }
+
   return (
-    <UserSessionContext.Provider value={{ user, setUser, loading }}>
+    <UserSessionContext.Provider value={{ user, setUser, loading, logout }}>
       {children}
     </UserSessionContext.Provider>
   );

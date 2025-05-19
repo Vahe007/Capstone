@@ -1,6 +1,6 @@
 export enum EMAIL_SUBJECT {
-  'verify',
-  'reset',
+  verify = 'verify',
+  reset = 'reset',
 }
 
 export const emailSubject = {

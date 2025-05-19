@@ -40,7 +40,7 @@ type SavedDiagnosis = {
   accuracy?: string;
 };
 
-export default function Account() {
+export default function Profile() {
   const { user } = useUserSession();
   const [savedDiagnoses, setSavedDiagnoses] = useState<SavedDiagnosis[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -93,18 +93,36 @@ export default function Account() {
       resetForm: () => void;
     },
   ) => {
-    setResetMessage("");
+    setSubmitting(true);
     setResetMessageType(null);
     setResetMessage("Processing password reset...");
 
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log("Password reset submitted:", values);
+    try {
+      const response = await fetch('/api/account/update-password', {
+        method: 'POST',
+        body: JSON.stringify({
+          oldPassword: values.currentPassword,
+          newPassword: values.newPassword,
+        }),
+      });
 
-    setResetMessage("Password has been updated successfully.");
-    setResetMessageType("success");
+      const data = await response.json();
 
-    resetForm();
-    setSubmitting(false);
+      setResetMessage(data.message);
+
+      if (response.status === 200) {
+        setResetMessageType("success");
+        resetForm();
+        return;
+      }
+
+      setResetMessageType("error");
+    } catch {
+      setResetMessage("error");
+      setResetMessage("Unexpected Error");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const validateResetPasswordForm = (values: ResetPasswordFormValues) => {

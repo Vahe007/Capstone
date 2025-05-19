@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { renderIcon } from "./helpers";
 import { useRouter } from "next/navigation";
-import Error from "next/error";
+import { useUserSession } from "@/providers/userSessionProvider/UserSessionProvider";
 
 export default function VerifyEmail() {
   const searchParams = useSearchParams();
@@ -16,6 +16,8 @@ export default function VerifyEmail() {
   const [message, setMessage] = useState(
     "Verifying your email, please wait...",
   );
+
+  console.log('verify email component')
 
   useEffect(() => {
     const token = searchParams.get("token");

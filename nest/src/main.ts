@@ -7,8 +7,6 @@ import * as dotenv from 'dotenv';
 
 const result = dotenv.config();
 
-console.log('result is result', result);
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
 
