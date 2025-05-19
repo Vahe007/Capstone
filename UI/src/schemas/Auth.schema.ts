@@ -26,7 +26,6 @@ export const userName = z
 export const LoginSchema = z.object({
   userName,
   password,
-  rememberMe: z.boolean().optional(),
 });
 
 export const SignupSchema = z

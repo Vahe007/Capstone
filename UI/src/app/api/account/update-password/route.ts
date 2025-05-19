@@ -31,7 +31,6 @@ export const POST = async (req: NextRequest) => {
 
     const data = await response.json();
 
-
     if (response.status === 200) {
       return NextResponse.json(
         { message: 'Password successfully changed' },

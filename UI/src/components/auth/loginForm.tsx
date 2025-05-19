@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useRouter } from "next/navigation";
 import { z, ZodError } from "zod";
-import { LoginSchema, userName } from "@/schemas/Auth.schema";
+import { LoginSchema } from "@/schemas/Auth.schema";
 import Cookies from "js-cookie";
 import { useUserSession } from "@/providers/userSessionProvider/UserSessionProvider";
 
@@ -16,15 +16,19 @@ const LoginForm: React.FC = () => {
   const { setUser } = useUserSession();
   const [submitMessage, setSubmitMessage] = useState("");
   const [submitError, setSubmitError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleShowPassword = () => {
+    console.log("onclick");
+    setShowPassword(!showPassword);
+  };
 
   const handleLoginSubmit = async (
     values: LoginFormValues,
     {
       setSubmitting,
-      resetForm,
     }: {
       setSubmitting: (isSubmitting: boolean) => void;
-      resetForm: () => void;
     },
   ) => {
     setSubmitError(false);
@@ -110,7 +114,7 @@ const LoginForm: React.FC = () => {
         </div>
 
         <Formik
-          initialValues={{ userName: "", password: "", rememberMe: false }}
+          initialValues={{ userName: "", password: "", showPassword: false }}
           validate={validateForm}
           onSubmit={handleLoginSubmit}
         >
@@ -134,7 +138,7 @@ const LoginForm: React.FC = () => {
 
               <div className="form-floating mb-3">
                 <Field
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   placeholder="Password"
                   className={`form-control ${errors.password && touched.password ? "is-invalid" : ""}`}
@@ -150,17 +154,17 @@ const LoginForm: React.FC = () => {
 
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <div className="form-check">
-                  <Field
+                  <input
                     type="checkbox"
-                    name="rememberMe"
                     className="form-check-input"
-                    id="rememberMe"
+                    id="showPassword"
+                    onChange={handleShowPassword}
                   />
                   <label
                     className="form-check-label text-muted small"
-                    htmlFor="rememberMe"
+                    htmlFor="showPassword"
                   >
-                    Remember me
+                    Show Password
                   </label>
                 </div>
                 <Link href="/forgot-password">Forgot password?</Link>
