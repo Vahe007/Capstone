@@ -163,7 +163,7 @@ const LoginForm: React.FC = () => {
                     Remember me
                   </label>
                 </div>
-                <Link href="/reset-password">Forgot password?</Link>
+                <Link href="/forgot-password">Forgot password?</Link>
               </div>
 
               {submitMessage && (

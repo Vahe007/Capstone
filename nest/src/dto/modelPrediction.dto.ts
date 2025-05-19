@@ -9,6 +9,17 @@ import {
   ValidateNested,
 } from 'class-validator';
 
+interface ClassificationReportMetrics {
+  precision: number;
+  recall: number;
+  'f1-score': number;
+  support: number;
+}
+
+interface ClassificationReportData {
+  [className: string]: ClassificationReportMetrics;
+}
+
 export class FeaturesDto {
   @IsDefined() @IsInt() @Min(0) age: number;
   @IsDefined() @IsInt() @Min(0) @Max(1) sex: number;
@@ -28,8 +39,8 @@ export class FeaturesDto {
 export class ModelPredictionRequestDto {
   @IsDefined()
   @IsObject()
-  @ValidateNested() // Validate the nested object's properties
-  @Type(() => FeaturesDto) // Tell class-transformer how to validate the nested object
+  @ValidateNested()
+  @Type(() => FeaturesDto)
   features: FeaturesDto;
 }
 
@@ -38,4 +49,11 @@ export class ModelPredictionResponseDto {
   model_name?: string;
   interaction_id?: string;
   dataSaved: boolean;
+}
+
+export class ModelMetricsDto {
+  model_name: string;
+  accuracy: number;
+  classification_report: ClassificationReportData;
+  confusion_matrix: [[number, number], [number, number]];
 }

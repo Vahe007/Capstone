@@ -32,13 +32,12 @@ export class InitialDiagnosisService {
       const requestBody = { freestyle_text: requestDto.freestyle_text };
 
       const response = await firstValueFrom(
-        this.httpService.post<{ initial_diagnosis_text: string }>(
-          endpointUrl,
-          requestBody,
-          {
-            timeout: 15000,
-          },
-        ),
+        this.httpService.post<{
+          initial_diagnosis_text: string;
+          similar_cases: string[];
+        }>(endpointUrl, requestBody, {
+          timeout: 15000,
+        }),
       );
 
       console.log('response from the initial diagnosis', response);
@@ -46,10 +45,12 @@ export class InitialDiagnosisService {
       if (
         response.status === 200 &&
         response.data &&
-        response.data.initial_diagnosis_text
+        response.data.initial_diagnosis_text &&
+        response.data.similar_cases
       ) {
         return {
           initial_diagnosis_text: response.data.initial_diagnosis_text,
+          similar_cases: response.data.similar_cases,
           //   interaction_id: uuidv4(),
         };
       } else {

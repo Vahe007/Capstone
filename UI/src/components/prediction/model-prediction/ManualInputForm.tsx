@@ -92,7 +92,7 @@ export default function ManualInputForm({
               rawValue === null ||
               rawValue === undefined
             ) {
-              processedValues[field.name] = undefined; 
+              processedValues[field.name] = undefined;
             } else if (field.type === "number" || field.type === "select") {
               const num = parseFloat(rawValue as string);
               processedValues[field.name] = isNaN(num) ? undefined : num;
@@ -111,63 +111,67 @@ export default function ManualInputForm({
       >
         {({ errors, touched }) => (
           <div>
-            <Form
-              id="manualFeaturesForm"
-            >
-              {fieldsConfig.map((field) => (
-                <div key={field.name}>
-                  <label
-                    htmlFor={field.name}
-                    className="block text-sm font-medium text-slate-700 mb-1"
+            <Form id="manualFeaturesForm">
+              <div className="flex flex-wrap -mx-2">
+                {fieldsConfig.map((field, index) => (
+                  <div
+                    key={field.name}
+                    className="w-full md:w-1/3 px-2 mb-6 flex flex-col justify-start"
                   >
-                    {field.label}
-                  </label>
-                  {field.type === "select" ? (
-                    <Field
-                      as="select"
-                      name={field.name}
-                      id={field.name}
-                      className={`mt-1 block w-full rounded-lg border bg-slate-50 px-3.5 py-2.5 text-sm text-slate-800 shadow-sm transition-colors duration-150 ease-in-out 
-                                            ${
-                                              errors[field.name as string] &&
-                                              touched[field.name as string]
-                                                ? "border-red-500 text-red-800 focus:border-red-500 focus:ring-red-500/60"
-                                                : "border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/30"
-                                            } focus:outline-none`}
-                    >
-                      {field.options?.map((option) => (
-                        <option
-                          key={option.value.toString()}
-                          value={option.value}
+                    <div className="h-full">
+                      <label
+                        htmlFor={field.name}
+                        className="block text-sm font-medium text-slate-700 mb-1"
+                      >
+                        {field.label}
+                      </label>
+                      {field.type === "select" ? (
+                        <Field
+                          as="select"
+                          name={field.name}
+                          id={field.name}
+                          className={`block w-full rounded-lg border bg-slate-50 px-3.5 py-2.5 text-sm text-slate-800 shadow-sm transition-colors duration-150 ease-in-out
+              ${
+                errors[field.name as string] && touched[field.name as string]
+                  ? "border-red-500 text-red-800 focus:border-red-500 focus:ring-red-500/60"
+                  : "border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/30"
+              } focus:outline-none`}
                         >
-                          {option.label}
-                        </option>
-                      ))}
-                    </Field>
-                  ) : (
-                    <Field
-                      type="number"
-                      step="any"
-                      name={field.name}
-                      id={field.name}
-                      className={`mt-1 block w-full rounded-lg border bg-slate-50 px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 shadow-sm transition-colors duration-150 ease-in-out 
-                                            ${
-                                              errors[field.name as string] &&
-                                              touched[field.name as string]
-                                                ? "border-red-500 text-red-800 placeholder-red-400 focus:border-red-500 focus:ring-red-500/60"
-                                                : "border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/30"
-                                            } focus:outline-none`}
-                      placeholder={field.placeholder || `Enter value`}
-                    />
-                  )}
-                  <ErrorMessage
-                    name={field.name}
-                    component="div"
-                    className="mt-1.5 text-xs font-medium text-red-600"
-                  />
-                </div>
-              ))}
-            <Button isLoading={isLoading} type='submit' />
+                          {field.options?.map((option) => (
+                            <option
+                              key={option.value.toString()}
+                              value={option.value}
+                            >
+                              {option.label}
+                            </option>
+                          ))}
+                        </Field>
+                      ) : (
+                        <Field
+                          type="number"
+                          step="any"
+                          name={field.name}
+                          id={field.name}
+                          className={`block w-full rounded-lg border bg-slate-50 px-3.5 py-2.5 text-sm text-slate-800 placeholder-slate-400 shadow-sm transition-colors duration-150 ease-in-out
+              ${
+                errors[field.name as string] && touched[field.name as string]
+                  ? "border-red-500 text-red-800 placeholder-red-400 focus:border-red-500 focus:ring-red-500/60"
+                  : "border-slate-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/30"
+              } focus:outline-none`}
+                          placeholder={field.placeholder || `Enter value`}
+                        />
+                      )}
+                      <ErrorMessage
+                        name={field.name}
+                        component="div"
+                        className="mt-1.5 text-xs font-medium text-red-600"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <Button isLoading={isLoading} type="submit" />
             </Form>
           </div>
         )}

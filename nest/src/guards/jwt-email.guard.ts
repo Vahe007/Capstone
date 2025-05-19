@@ -23,7 +23,7 @@ export class JwtEmailGuard implements CanActivate {
       const secret = this.configService.get<string>('jwt_secret');
       const payload = this.jwtService.verify(token, { secret });
       // attaching the emailpayload for a later use
-      (req as any).emailPayload = payload;
+      (req as any).payload = payload;
       return true;
     } catch (err) {
       throw new UnauthorizedException('Invalid or expired email token');

@@ -31,7 +31,8 @@ export class User {
   @Prop({ default: false })
   isVerified: boolean;
 
-  token: string;
+  @Prop({ required: false })
+  token?: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

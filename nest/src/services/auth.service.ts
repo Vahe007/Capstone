@@ -1,5 +1,6 @@
 import { EMAIL_SUBJECT } from 'src/utils';
 import {
+  BadRequestException,
   ConflictException,
   HttpException,
   Injectable,
@@ -28,13 +29,11 @@ export class AuthService {
     private configService: ConfigService,
   ) {
     this.jwtSecret = this.configService.get('jwt_secret')!;
-    console.log(
-      'jwt secret inside the auth service is',
-      this.configService.get('jwt_secret'),
-    );
   }
 
-  async signIn(data: SignInUserDto): Promise<{ access_token: string, userInfo: Record<string, any> }> {
+  async signIn(
+    data: SignInUserDto,
+  ): Promise<{ access_token: string; userInfo: Record<string, any> }> {
     this.jwtSecret = this.configService.get('jwt_secret')!;
 
     const { userName, password } = data;
@@ -50,11 +49,9 @@ export class AuthService {
     if (!isPasswordMatching) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    const {password: _, ...userInfo} = user;
+    const { password: _, ...userInfo } = user;
 
-    console.log('userinfo is', userInfo)
-
-    const payload = {sub: userInfo._id, ...userInfo};
+    const payload = { sub: userInfo._id, ...userInfo };
 
     return {
       access_token: await this.jwtService.signAsync(payload),
@@ -68,8 +65,6 @@ export class AuthService {
     const existingUser = await this.userService.findUserBy({
       $or: [{ email: resetData.email }, { userName: resetData.userName }],
     });
-
-    console.log('existingUser', existingUser)
 
     if (existingUser) {
       throw new ConflictException(
@@ -90,13 +85,11 @@ export class AuthService {
         ...resetData,
         isVerified: false,
       });
-  
-      console.log('user after the registration', user);
-  
+
       if (!user) {
         throw new HttpException('User creation failed', 404);
       }
-  
+
       await this.emailService.sendEmail(
         data.firstName,
         data.email,
@@ -104,124 +97,174 @@ export class AuthService {
         EMAIL_SUBJECT.verify,
       );
 
-      const {password: _, ...userInfo} = user;
+      const { password: _, ...userInfo } = user;
 
-      const payload = {sub: userInfo._id, ...userInfo};
-
-      console.log('userobject is', userInfo)
+      const payload = { sub: userInfo._id, ...userInfo };
 
       return {
         access_token: await this.jwtService.signAsync(payload),
         userInfo,
-        message: 'Registration successful. Please check your email to verify your account.',
+        message:
+          'Registration successful. Please check your email to verify your account.',
       };
-    } catch(error) {
+    } catch (error) {
       if (error instanceof ConflictException) {
         throw error;
       }
-      throw new InternalServerErrorException('User registration failed due to an internal error.');
+      throw new InternalServerErrorException(
+        'User registration failed due to an internal error.',
+      );
     }
-
-
   }
 
-  // async verifyEmail({ email, token, subject }) {
-  //   const user = await this.userService.findUser({ email });
-
-  //   if (!user) {
-  //     throw new HttpException('User not found', 404);
-  //   }
-
-  //   const isValid = this.jwtService.verify(token, {
-  //     secret: this.jwtSecret,
-  //   });
-
-  //   const decoded = this.jwtService.decode(token);
-
-  //   console.log('isValid', isValid);
-  //   console.log('decoded jwt token for email verification', decoded);
-
-  //   if (!isValid) {
-  //     throw new HttpException('Token is expired', 400);
-  //   }
-
-  //   if (subject === EMAIL_SUBJECT.verify) {
-  //     return this.userService.updateUser(user.id, {
-  //       $unset: {
-  //         token: 1,
-  //       },
-  //       $set: {
-  //         isVerified: true,
-  //       },
-  //     });
-  //   }
-  // }
-
-  async changePasswordEmailTrigger(email: string) {
+  async verifyAccountEmailTrigger(email: string) {
     if (!email) {
       throw new HttpException('Password reset failed', 404);
     }
 
-    const user = await this.userService.findUser({ email });
+    const user = await this.userService.findUserBy({ email });
 
     if (!user) {
-      throw new HttpException('User not found', 404);
+      throw new NotFoundException('User not found');
     }
 
     const token = this.jwtService.sign({
       email,
     });
 
-    await this.emailService.sendEmail(user.firstName, user.email, token, EMAIL_SUBJECT.reset);
+    if (user._id) {
+      await this.userService.updateUser(user._id, {
+        set: {
+          token,
+        },
+      });
+      await this.emailService.sendEmail(
+        user.firstName,
+        user.email,
+        token,
+        EMAIL_SUBJECT.verify,
+      );
+      return { message: 'success' };
+    }
+
+    throw new NotFoundException('User not found');
   }
 
-  async changePassword({ token, newPassword }: ChangePasswordDto) {
-    const user = await this.userService.findUserBy({ token });
-
-    if (!user?.isVerified) {
+  async changePasswordEmailTrigger(email: string) {
+    if (!email) {
       throw new HttpException('Password reset failed', 404);
     }
 
-    const userId = (user as UserDocument & { _id: ObjectId })._id;
+    const user = await this.userService.findUserBy({ email });
+    const userId = user?._id;
 
-    const newPasswordHash = await bcrypt.hash(newPassword, 10);
-
-    if (user.password === newPasswordHash) {
-      throw new HttpException('Password reset failed', 404);
-    }
-
-    // Check needs to be added in here
-    // To check if the new password is not matching to old one
-    await this.userService.updateUser(userId, {
-      $unset: {
-        token: 1,
-      },
-      $set: {
-        passwordHash: newPasswordHash,
-      },
-    });
-  }
-
-  async verifyAccount(token: string) {
-    const user = await this.userService.findUserBy({ token });
-
-    console.log('user to verify is', user);
-
-    if (!user) {
+    if (!user || !userId) {
       throw new NotFoundException('User not found');
     }
 
-    const userId = (user as UserDocument & { _id: ObjectId })._id;
+    const token = this.jwtService.sign({
+      email,
+    });
 
-    console.log('userid is', userId);
-
-    this.userService.updateUser(userId, {
-      $unset: {
-        token: 1,
-      },
-      $set: {
-        isVerified: true,
+    await this.userService.updateUser(userId, {
+      set: {
+        token,
       },
     });
+
+    await this.emailService.sendEmail(
+      user.firstName,
+      user.email,
+      token,
+      EMAIL_SUBJECT.reset,
+    );
+
+    return { message: 'success' };
+  }
+
+  async changePassword({
+    email,
+    password,
+    token,
+  }: {
+    email: string;
+    password: string;
+    token: string;
+  }) {
+    try {
+      const user = await this.userService.findUserBy({ email });
+
+      console.log('user is user', user);
+
+      if (!user) {
+        throw new BadRequestException('User not found');
+      }
+
+      if (!token || token !== user.token) {
+        throw new BadRequestException('Invalid or expired email token');
+      }
+
+      const userId = user._id;
+      const isPasswordMatching = await bcrypt.compare(password, user.password);
+
+      if (isPasswordMatching) {
+        throw new BadRequestException(
+          'New password cannot be the same as the old password.',
+        );
+      }
+
+      const newPasswordHash = await bcrypt.hash(password, 10);
+
+      await this.userService.updateUser(userId!, {
+        set: {
+          password: newPasswordHash,
+        },
+        unset: ['token'],
+      });
+
+      return { message: 'success' };
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async verifyEmail(token: string) {
+    try {
+      const user = await this.userService.findUserBy({ token });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      const userId = user._id;
+
+      if (user.token !== token) {
+        throw new HttpException('Token is not valid or expired', 400);
+      }
+
+      await this.userService.updateUser(userId!, {
+        set: {
+          isVerified: true,
+        },
+        unset: ['token'],
+      });
+
+      console.log('should be successful');
+
+      return { success: true };
+    } catch (error) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof HttpException
+      ) {
+        throw error;
+      }
+
+      throw new InternalServerErrorException();
+    }
   }
 }

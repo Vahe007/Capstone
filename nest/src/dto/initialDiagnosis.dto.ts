@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsArray, IsNotEmpty, IsString, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class InitialDiagnosisRequestDto {
@@ -23,6 +23,9 @@ export class InitialDiagnosisResponseDto {
   })
   @IsString()
   initial_diagnosis_text: string;
+
+  @IsArray()
+  similar_cases: string[];
 
   @ApiProperty({
     example: 'diag_abc123',

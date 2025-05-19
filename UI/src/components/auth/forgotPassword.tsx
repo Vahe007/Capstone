@@ -4,34 +4,50 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { z, ZodError } from "zod";
-import { ResetPasswordSchema } from "@/schemas/Auth.schema";
+import { ForgotPasswordSchema } from "@/schemas/Auth.schema";
 
-type ResetPasswordFormValues = z.infer<typeof ResetPasswordSchema>;
+type ForgotPasswordFormValues = z.infer<typeof ForgotPasswordSchema>;
 
-const ResetPasswordForm: React.FC = () => {
+const ForgotPassword: React.FC = () => {
   const [submitMessage, setSubmitMessage] = useState("");
   const [submitError, setSubmitError] = useState(false);
 
   const handleResetSubmit = async (
-    values: ResetPasswordFormValues,
+    values: ForgotPasswordFormValues,
     {
       setSubmitting,
-      resetForm,
     }: {
       setSubmitting: (isSubmitting: boolean) => void;
-      resetForm: () => void;
     },
   ) => {
-    setSubmitMessage("");
     setSubmitError(false);
     setSubmitMessage("Sending reset link...");
+    try {
+      const response = await fetch("/api/account/forgot-password", {
+        method: "POST",
+        body: JSON.stringify(values),
+      });
 
-    console.log("values", values);
+      const data = await response.json();
+
+      setSubmitting(false);
+      setSubmitMessage(data.message);
+
+      if (response.status !== 200) {
+        setSubmitError(true);
+      }
+
+      setSubmitting(false);
+    } catch {
+      setSubmitError(true);
+      setSubmitting(false);
+      setSubmitMessage("Unexpected error occurred");
+    }
   };
 
-  const validateForm = (values: ResetPasswordFormValues) => {
+  const validateForm = (values: ForgotPasswordFormValues) => {
     try {
-      ResetPasswordSchema.parse(values);
+      ForgotPasswordSchema.parse(values);
       return {};
     } catch (error) {
       if (error instanceof ZodError) {
@@ -99,7 +115,7 @@ const ResetPasswordForm: React.FC = () => {
               <button
                 className="w-100 btn btn-lg btn-primary mt-4"
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || (!submitError && !!submitMessage)}
               >
                 {isSubmitting ? (
                   <>
@@ -126,4 +142,4 @@ const ResetPasswordForm: React.FC = () => {
   );
 };
 
-export default ResetPasswordForm;
+export default ForgotPassword;

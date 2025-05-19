@@ -53,7 +53,7 @@ export class EmailService {
     subject: EMAIL_SUBJECT,
   ): Promise<void> {
     // Generating and sending a verification email
-    const verificationUrl = `http://localhost:3000/verify-email?token=${token}`;
+    const verificationUrl = `http://localhost:3000/${subject === EMAIL_SUBJECT.verify ? 'verify-email' : 'reset-password'}?token=${token}`;
     const filePath = path.join(
       process.cwd(),
       'src',
@@ -78,7 +78,7 @@ export class EmailService {
 
     await this.emailTransporter.sendMail(mailOptions);
 
-    console.log('email sent')
+    console.log('email sent');
   }
 
   async generateToken(payload) {

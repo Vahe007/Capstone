@@ -3,14 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 const { API_URL } = process.env;
 
-export const POST = async (req: NextRequest) => {
+export const GET = async (req: NextRequest) => {
   try {
     const accessToken = await getCookie("accessToken");
-    const body = await req.json();
-    const { model_type, features } = body;
-
-    console.log("modelType inside the route is", model_type);
-    console.log("features inside the route is", features);
 
     if (!API_URL) {
       return NextResponse.json(
@@ -23,35 +18,31 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json({ error: "Unauthorized" }, { status: 400 });
     }
 
-    const response = await fetch(`${API_URL}/modelPrediction/${model_type}`, {
-      method: "POST",
+    const response = await fetch(`${API_URL}/modelPrediction/diagnosis`, {
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify({ features }),
     });
 
     const data = await response.json();
 
-    console.log("data is data", data);
+    console.log("data inside the route is", data);
+
     if (response.status === 200) {
       return NextResponse.json(
         {
-          ...data,
+          diagnosis: data,
           error: null,
         },
         { status: 200 },
       );
     }
 
-    const error = Array.isArray(data.message)
-      ? data.message.join(",")
-      : data.message;
-
     return NextResponse.json(
       {
-        error,
+        error: "Error",
       },
       { status: 400 },
     );

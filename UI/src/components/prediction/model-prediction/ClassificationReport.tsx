@@ -2,7 +2,6 @@
 import { ClassificationReportData } from "@/types";
 import React from "react";
 
-
 export default function ClassificationReport({
   classification_report,
 }: {

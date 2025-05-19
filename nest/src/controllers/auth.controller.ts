@@ -9,6 +9,9 @@ import {
   HttpCode,
   UseGuards,
   Query,
+  HttpException,
+  Get,
+  Req,
 } from '@nestjs/common';
 import { CreateUserDto } from 'src/dto/createUser.dto';
 import { SignInUserDto } from 'src/dto/loginUse.dto';
@@ -40,15 +43,43 @@ export class AuthController {
   @UsePipes(new ValidationPipe())
   @HttpCode(200)
   @UseGuards(JwtEmailGuard)
-  async changePassword(@Body() changePasswordDto: ChangePasswordDto) {
-    return this.authSerivce.changePassword(changePasswordDto);
+  async changePassword(@Req() req, @Body() body: ChangePasswordDto) {
+    const { token, password } = body;
+    console.log('request is request', req);
+    console.log('(req as any).emailPayload = payload;', req.payload.email);
+    return this.authSerivce.changePassword({
+      email: req.payload.email,
+      password,
+      token,
+    });
   }
 
-  @Post('verifyAccount')
+  @Public()
+  @Post('sendResetPasswordEmail')
+  @UsePipes(new ValidationPipe())
+  @HttpCode(200)
+  async sendResetPasswordEmail(@Body() data: { email: string }) {
+    if (data.email) {
+      return await this.authSerivce.changePasswordEmailTrigger(data.email);
+    }
+    throw new HttpException('Missing email address', 400);
+  }
+
+  @Post('sendVerificationEmail')
+  @UsePipes(new ValidationPipe())
+  @HttpCode(200)
+  async sendVerificationEmail(@Body() data: { email: string }) {
+    if (data.email) {
+      return await this.authSerivce.verifyAccountEmailTrigger(data.email);
+    }
+    throw new HttpException('Missing email address', 400);
+  }
+
+  @Get('verifyEmail')
   @UsePipes(new ValidationPipe())
   @HttpCode(200)
   @UseGuards(JwtEmailGuard)
-  async verifyAccount(@Query() token: string) {
-    return await this.authSerivce.verifyAccount(token);
+  async verifyEmail(@Query('token') token) {
+    return await this.authSerivce.verifyEmail(token);
   }
 }

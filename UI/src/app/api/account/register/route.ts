@@ -23,14 +23,11 @@ export const POST = async (req: NextRequest) => {
 
     const data = await response.json();
 
-    console.log("response status", response.status);
-
     if (response.status === 201) {
       return NextResponse.json(data, { status: 201 });
     }
 
     if (response.status === 409) {
-      console.log("chmtav ste are?");
       return NextResponse.json(
         { error: "User already exists" },
         { status: 409 },

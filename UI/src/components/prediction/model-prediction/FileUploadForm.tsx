@@ -34,7 +34,7 @@ export default function FileUploadForm({
     reader.onload = (e) => {
       const data = new Uint8Array(e.target!.result as ArrayBuffer);
       const workbook = XLSX.read(data, { type: "array" });
-  
+
       const firstSheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[firstSheetName];
 
@@ -42,13 +42,12 @@ export default function FileUploadForm({
 
       if (Array.isArray(jsonData)) {
         const cleanedData = cleanRow(jsonData[0] as Record<string, any>);
-        console.log('cleanedData', cleanedData)
-        setFeatures(cleanedData)
+        console.log("cleanedData", cleanedData);
+        setFeatures(cleanedData);
       }
-  
+
       setFileName(file.name);
       setIsLoading(false);
-
     };
     reader.readAsArrayBuffer(file);
     setIsLoading(false);
@@ -61,8 +60,7 @@ export default function FileUploadForm({
         model_type,
       });
     }
-  }
-
+  };
 
   return (
     <div className="tab-content active bg-white p-6 rounded-lg shadow-lg border border-slate-200">
@@ -112,8 +110,7 @@ export default function FileUploadForm({
         </div>
       </form>
 
-      <Button isLoading={isLoading} onClick={handleSubmit} type='submit' />
-
+      <Button isLoading={isLoading} onClick={handleSubmit} type="submit" />
     </div>
   );
 }

@@ -28,19 +28,22 @@ export default function ModelPrediction() {
   const cmPlaceholderRef = useRef<HTMLParagraphElement>(null);
   const metricsPlaceholderRef = useRef<HTMLParagraphElement>(null);
 
-  let confusionMatrixChartInstance: any = null;
-  let metricsChartInstance: any = null;
+  const confusionMatrixChartInstanceRef = useRef<any>(null);
+  const metricsChartInstanceRef = useRef<any>(null);
 
   useEffect(() => {
     return () => {
-      if (confusionMatrixChartInstance) confusionMatrixChartInstance.destroy();
-      if (metricsChartInstance) metricsChartInstance.destroy();
+      if (confusionMatrixChartInstanceRef.current) {
+        confusionMatrixChartInstanceRef.current.destroy();
+      }
+      if (metricsChartInstanceRef.current) {
+        metricsChartInstanceRef.current.destroy();
+      }
     };
   }, []);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-        console.log('file name is bro', e.target.files[0].name)
       setFileName(e.target.files[0].name);
     } else {
       setFileName("No file chosen");
@@ -50,14 +53,17 @@ export default function ModelPrediction() {
   const renderConfusionMatrixChart = (
     matrix: [[number, number], [number, number]],
   ) => {
-    if (confusionMatrixChartInstance) confusionMatrixChartInstance.destroy();
-    if (cmPlaceholderRef.current)
+    if (confusionMatrixChartInstanceRef.current) {
+      confusionMatrixChartInstanceRef.current.destroy();
+    }
+    if (cmPlaceholderRef.current) {
       cmPlaceholderRef.current.style.display = "none";
+    }
 
     if (confusionMatrixChartRef.current) {
       const ctx = confusionMatrixChartRef.current.getContext("2d");
       if (ctx) {
-        confusionMatrixChartInstance = new Chart(ctx, {
+        confusionMatrixChartInstanceRef.current = new Chart(ctx, {
           type: "bar",
           data: {
             labels: ["Predicted Negative", "Predicted Positive"],
@@ -103,9 +109,12 @@ export default function ModelPrediction() {
   };
 
   const renderMetricsChart = (report: ClassificationReportData) => {
-    if (metricsChartInstance) metricsChartInstance.destroy();
-    if (metricsPlaceholderRef.current)
+    if (metricsChartInstanceRef.current) {
+      metricsChartInstanceRef.current.destroy();
+    }
+    if (metricsPlaceholderRef.current) {
       metricsPlaceholderRef.current.style.display = "none";
+    }
 
     const labels = Object.keys(report).filter((key) => !key.includes("avg"));
     const precisionData = labels.map((key) => report[key].precision);
@@ -115,7 +124,7 @@ export default function ModelPrediction() {
     if (metricsChartRef.current) {
       const ctx = metricsChartRef.current.getContext("2d");
       if (ctx) {
-        metricsChartInstance = new Chart(ctx, {
+        metricsChartInstanceRef.current = new Chart(ctx, {
           type: "bar",
           data: {
             labels: labels.map((l) => `Class ${l}`),
@@ -163,72 +172,110 @@ export default function ModelPrediction() {
     features,
     model_type,
   }: ModelPredicitonRequestInput) => {
-
-    console.log('onSubmit shold work bro')
     setIsLoading(true);
     setPredictionText(null);
+    setPredictionResponse(null);
+
+    if (confusionMatrixChartInstanceRef.current) {
+      confusionMatrixChartInstanceRef.current.destroy();
+      confusionMatrixChartInstanceRef.current = null;
+    }
+    if (metricsChartInstanceRef.current) {
+      metricsChartInstanceRef.current.destroy();
+      metricsChartInstanceRef.current = null;
+    }
+    if (cmPlaceholderRef.current)
+      cmPlaceholderRef.current.style.display = "block";
+    if (metricsPlaceholderRef.current)
+      metricsPlaceholderRef.current.style.display = "block";
+
     try {
       const body = {
         features,
         model_type,
       };
-
-      console.log("body for the submission is ", body);
       const response = await fetch(`/api/predictions/model-prediction`, {
         method: "POST",
         body: JSON.stringify(body),
       });
-
-      console.log("response is response");
-
       const data = await response.json();
 
-      console.log("data is data from the prediciton", data);
-
-      setPredictionResponse(data);
-      setPredictionText(
-        `Prediction for ${data.model_name} is complete. The patient ${data.prediction === 1 ? "has" : "does not have"} heart disease.`,
-      );
-      setIsLoading(false);
+      if (response.ok) {
+        setPredictionResponse(data);
+        setPredictionText(
+          `Prediction for ${data.model_name} is complete. The patient ${data.prediction === 1 ? "has" : "does not have"} heart disease.`,
+        );
+        if (data.classification_report && data.confusion_matrix) {
+          setMetrics(data);
+          renderConfusionMatrixChart(data.confusion_matrix);
+          renderMetricsChart(data.classification_report);
+        } else if (metrics) {
+          renderConfusionMatrixChart(metrics.confusion_matrix);
+          renderMetricsChart(metrics.classification_report);
+        }
+      } else {
+        setPredictionText(data.error || "Prediction failed.");
+      }
     } catch (error) {
-      console.log("error is error", error);
+      setPredictionText("An error occurred during prediction.");
+    } finally {
       setIsLoading(false);
     }
   };
 
   const handleModelChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newModelValue = e.target.value;
+    setSelectedModel(newModelValue);
     setIsLoading(true);
-    setSelectedModel(e.target.value);
+
+    setMetrics(null);
+    setPredictionResponse(null);
+    setPredictionText(
+      `Loading metrics for ${newModelValue === "xgboost" ? "XGBoost Model" : newModelValue === "logistic_regression" ? "Logistic Regression" : "KNN Model"}...`,
+    );
+
+    if (confusionMatrixChartInstanceRef.current) {
+      confusionMatrixChartInstanceRef.current.destroy();
+      confusionMatrixChartInstanceRef.current = null;
+    }
+    if (metricsChartInstanceRef.current) {
+      metricsChartInstanceRef.current.destroy();
+      metricsChartInstanceRef.current = null;
+    }
+    if (cmPlaceholderRef.current) {
+      cmPlaceholderRef.current.style.display = "block";
+    }
+    if (metricsPlaceholderRef.current) {
+      metricsPlaceholderRef.current.style.display = "block";
+    }
 
     try {
-        if (cmPlaceholderRef.current)
-          cmPlaceholderRef.current.style.display = "block";
-        if (metricsPlaceholderRef.current)
-          metricsPlaceholderRef.current.style.display = "block";
-        if (confusionMatrixChartInstance) confusionMatrixChartInstance.destroy();
-        if (metricsChartInstance) metricsChartInstance.destroy();
-    
-        const model = e.target.value;
-        const response = await fetch(`/api/predictions/metrics/${model}`, {
+      const response = await fetch(
+        `/api/predictions/metrics/${newModelValue}`,
+        {
           method: "GET",
-        });
-    
-        const data = await response.json();
-    
-        console.log("data on handleModel change is", data);
-    
-        if (response.status === 200) {
-          setMetrics(data);
-          renderConfusionMatrixChart(data.confusion_matrix);
-          renderMetricsChart(data.classification_report);
-          setIsLoading(false);
-          return;
-        }
-    
-        setIsLoading(false);
-    } catch {
-        console.log('error block')
-        setIsLoading(false);
+        },
+      );
+      const data = await response.json();
+
+      if (response.ok) {
+        setMetrics(data);
+        setPredictionText(null);
+        renderConfusionMatrixChart(data.confusion_matrix);
+        renderMetricsChart(data.classification_report);
+      } else {
+        setMetrics(null);
+        setPredictionText(
+          data.message || `Failed to load metrics for ${newModelValue}.`,
+        );
+      }
+    } catch (error) {
+      setMetrics(null);
+      setPredictionText(
+        `An error occurred while loading metrics for ${newModelValue}.`,
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -273,7 +320,7 @@ export default function ModelPrediction() {
                   <option value="logistic_regression">
                     Logistic Regression
                   </option>
-                  <option value="knn">KNN Model</option>
+                  <option value="decision_tree">Decision Tree</option>
                 </select>
               </div>
               <div className="mt-6">
@@ -322,14 +369,21 @@ export default function ModelPrediction() {
               <h2 className="text-xl font-semibold text-slate-700 mb-4">
                 2. Prediction Summary
               </h2>
-              {isLoading && (
+              {isLoading && !predictionText && (
                 <p className="italic text-center py-8 text-slate-500">
-                  Analyzing data and running prediction...
+                  Loading data...
                 </p>
               )}
-              {!isLoading && !metrics && (
+              {predictionText && (
+                <p
+                  className={`italic text-center py-8 ${isLoading ? "text-slate-500" : "text-red-600 font-bold text-lg"}`}
+                >
+                  {predictionText}
+                </p>
+              )}
+              {!isLoading && !predictionResponse && !predictionText && (
                 <p className="italic text-center py-8 text-slate-500">
-                  Results will appear here after running the prediction.
+                  Provide data to see prediction.
                 </p>
               )}
               {!isLoading && predictionResponse && metrics && (
@@ -343,11 +397,6 @@ export default function ModelPrediction() {
                       {(metrics.accuracy * 100).toFixed(2)}%
                     </span>
                   </p>
-                  {predictionText && (
-                    <p className="mt-2 text-red-600 font-bold text-lg">
-                      {predictionText}
-                    </p>
-                  )}
                 </div>
               )}
             </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import type { Metadata } from "next";
-import ResetPasswordForm from "@/components/auth/resetPassword";
+import ForgotPassword from "@/components/auth/forgotPassword";
 
 export const metadata: Metadata = {
   title: "Reset Password - HealthApp",
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function ResetPasswordPage() {
-  return <ResetPasswordForm />;
+  return <ForgotPassword />;
 }

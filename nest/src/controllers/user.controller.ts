@@ -9,6 +9,8 @@ import {
   ValidationPipe,
   Get,
   Delete,
+  Query,
+  Req,
 } from '@nestjs/common';
 import { Types } from 'mongoose';
 import mongoose from 'mongoose';
@@ -19,9 +21,14 @@ import { UserService } from 'src/services/user.service';
 export class UserController {
   constructor(private userService: UserService) {}
 
+  // @Get()
+  // getUsers() {
+  //   return this.userService.getUsers();
+  // }
+
   @Get()
-  getUsers() {
-    return this.userService.getUsers();
+  getUser(@Req() req: Request) {
+    return req['user'];
   }
 
   @Post()
@@ -39,7 +46,7 @@ export class UserController {
       throw new HttpException('User not found', 404);
     }
 
-    return this.userService.getUserById(id);
+    return this.userService.findById(id);
   }
 
   @Delete(':id')
