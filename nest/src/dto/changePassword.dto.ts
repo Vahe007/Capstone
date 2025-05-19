@@ -1,14 +1,4 @@
-import { IsNotEmpty, IsString, Matches, MinLength } from 'class-validator';
-
-function IsStrongPassword() {
-  return function (object: Object, propertyName: string) {
-    MinLength(8)(object, propertyName);
-    Matches(/^(?=.*[0-9])(?=.*[!@#$%^&*])/, {
-      message: 'Password must contain at least one number and one special character',
-    })(object, propertyName);
-  };
-}
-
+import { IsNotEmpty, IsString, IsStrongPassword } from 'class-validator';
 
 export class RecoverPasswordDto {
   @IsNotEmpty()

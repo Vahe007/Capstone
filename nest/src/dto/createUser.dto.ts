@@ -6,6 +6,7 @@ import {
   IsNumberString,
   IsOptional,
   IsString,
+  IsStrongPassword,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -25,8 +26,7 @@ export class CreateUserDto {
   @IsString()
   userName: string;
 
-  @IsNotEmpty()
-  @IsString()
+  @IsStrongPassword()
   password: string;
 
   @IsArray()
