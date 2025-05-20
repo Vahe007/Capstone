@@ -49,21 +49,19 @@ To run the entire system locally, you will need to set up and run each service c
 
 **Prerequisites:**
 
-* Node.js (version X.X.X or higher)
+* Node.js (version v18.16.0 or higher)
 * npm or yarn
-* Python (version X.X.X or higher)
+* Python (version 3.13.2 or higher)
 * pip (Python package installer)
-* MongoDB instance (local or cloud-based like MongoDB Atlas)
-* Qdrant instance (local using Docker, or cloud-based)
+* MongoDB instance (cloud-based MongoDB Atlas)
+* Qdrant instance (cloud-based)
 * OpenAI API Key
-* (Any other specific tools, e.g., Docker if used for Qdrant)
 
 **Setup Steps:**
 
 1.  **Clone the Repository:**
     ```bash
-    git clone [your-repository-url]
-    cd [your-project-root]
+    git clone [https://github.com/Vahe007/Capstone.git]
     ```
 
 2.  **Setup Frontend (UI):**
@@ -77,7 +75,7 @@ To run the entire system locally, you will need to set up and run each service c
 
 4.  **Setup Python Services (FastAPI):**
     * Navigate to the `/python-api` directory (or relevant subdirectories).
-    * Follow the instructions in `/python-api/README.md` (typically involves creating a virtual environment, `pip install -r requirements.txt`, setting up `.env` variables with OpenAI API keys, Qdrant URLs, etc., and running each FastAPI app using `uvicorn main:app --reload --port [PORT_NUMBER]`).
+    * Follow the instructions in `/python-api/README.md` (typically involves creating a virtual environment, `pip install -r requirements.txt`, setting up `.env` variables with OpenAI API keys, Qdrant URLs, etc., and running FastAPI from the /python folder by using `fastapi dev fastAPI/main.py`).
     * Ensure your Qdrant instance is running and accessible.
     * Ensure your trained ML models (`.joblib` files) and scaler are in the correct paths as expected by the FastAPI services.
 
@@ -89,15 +87,12 @@ To run the entire system locally, you will need to set up and run each service c
 
 Once all services are set up, you will need to start each one in separate terminal windows:
 * Frontend (Next.js): Typically on `http://localhost:3000`
-* Backend API (NestJS): Typically on `http://localhost:3001` (or as configured)
-* Python Initial Diagnosis API (FastAPI): Typically on `http://localhost:8000` (or as configured)
-* Python ML Prediction API (FastAPI): Typically on `http://localhost:8001` (or as configured, if separate from the initial diagnosis API)
+* Backend API (NestJS): Typically on `http://localhost:3001`
+* Python Initial Diagnosis API (FastAPI): Typically on `http://localhost:8000`
+* Python ML Prediction API (FastAPI): Typically on `http://localhost:8000`
 
 Ensure the URLs configured in each service's `.env` file correctly point to the other running services.
 
-## Project Structure
-
-.├── UI/                   # Next.js Frontend Application│   ├── ...│   └── README.md├── nest-js/              # NestJS Backend API│   ├── ...│   └── README.md├── python-api/           # Python FastAPI Services│   ├── initial_diagnosis_service/  # Example structure│   │   ├── ...│   │   └── README.md│   ├── ml_prediction_service/      # Example structure│   │   ├── ...│   │   └── README.md│   └── trained_models/     # Directory for saved ML models and scaler│   └── datasets/           # Original datasets used for training├── .env.example          # Optional: Example root env variables if any├── README.md             # This file└── ...                   # Other root level files (e.g., .gitignore, docker-compose.yml if used)
 ## Key Features Implemented
 
 * User Registration with Email Verification
@@ -106,10 +101,6 @@ Ensure the URLs configured in each service's `.env` file correctly point to the 
 * Custom ML Model Predictions for Heart Disease (Structured Input -> FastAPI -> Scikit-learn Model)
     * Supports multiple models (Decision Tree, Logistic Regression, etc.)
     * Returns prediction and model evaluation metrics.
-
-## Future Work / Potential Enhancements
-
-* [List 1-2 key future ideas, e.g., Direct wearable data integration, User dashboard for history]
 
 ## Authors
 
