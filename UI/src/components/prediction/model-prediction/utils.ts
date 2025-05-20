@@ -13,8 +13,6 @@ export const EXPECTED_FEATURES = [
   "exang",
   "oldpeak",
   "slope",
-  "ca",
-  "thal",
 ];
 
 export const cleanRow = (row: Record<string, any>): FeaturesType => {
@@ -201,35 +199,5 @@ export const fieldsConfig: FormFieldConfig[] = [
       })
       .min(0)
       .max(2),
-  },
-  {
-    name: "ca",
-    label: "Fluoroscopy Vessels (0-3)",
-    type: "number",
-    validation: z
-      .number({
-        required_error: "CA is required.",
-        invalid_type_error: "CA must be a number.",
-      })
-      .min(0)
-      .max(3),
-  },
-  {
-    name: "thal",
-    label: "Thalassemia",
-    type: "select",
-    options: [
-      { value: "", label: "Select thalassemia type" },
-      { value: 1, label: "Normal" },
-      { value: 2, label: "Fixed Defect" },
-      { value: 3, label: "Reversible Defect" },
-    ],
-    validation: z
-      .number({
-        required_error: "Thal type is required.",
-        invalid_type_error: "Please select a valid option.",
-      })
-      .min(1)
-      .max(3),
   },
 ];

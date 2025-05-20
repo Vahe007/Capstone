@@ -32,8 +32,6 @@ export class FeaturesDto {
   @IsDefined() @IsInt() @Min(0) @Max(1) exang: number; // exercise angina
   @IsDefined() @IsNumber() oldpeak: number;
   @IsDefined() @IsInt() @Min(0) @Max(2) slope: number; // ST slope
-  @IsDefined() @IsInt() @Min(0) @Max(4) ca: number; // number of major vessels (assuming 0-4 based on some datasets)
-  @IsDefined() @IsInt() @Min(0) @Max(3) thal: number; // thalassemia (assuming 0-3 based on some datasets)
 }
 
 export class ModelPredictionRequestDto {

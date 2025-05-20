@@ -34,7 +34,6 @@ export interface FormFieldConfig {
 
 export type FeaturesType = {
   age: number;
-  ca: number;
   chol: number;
   cp: number;
   exang: number;
@@ -43,7 +42,6 @@ export type FeaturesType = {
   restecg: number;
   sex: number;
   slope: number;
-  thal: number;
   thalach: number;
   trestbps: number;
 };

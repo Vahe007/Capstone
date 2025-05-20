@@ -33,6 +33,5 @@ export function getInputSummary(input: FeaturesType): string {
 BP: ${input.trestbps} mmHg, Cholesterol: ${input.chol} mg/dL, 
 Blood sugar: ${fbsMap[input.fbs]}, ECG: ${ecgMap[input.restecg]}, 
 Max heart rate: ${input.thalach} bpm, Angina on exercise: ${anginaMap[input.exang]}, 
-ST depression: ${input.oldpeak}, ST slope: ${slopeMap[input.slope]}, 
-Vessels affected: ${input.ca}, Thal: ${thalMap[input.thal]}.`;
+ST depression: ${input.oldpeak}, ST slope: ${slopeMap[input.slope]}.`;
 }
