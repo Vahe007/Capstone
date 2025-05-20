@@ -1,0 +1,40 @@
+{
+    "model_name": "logistic_regression_model",
+    "accuracy": 0.84,
+    "classification_report": {
+        "0": {
+            "precision": 0.8288288288288288,
+            "recall": 0.8214285714285714,
+            "f1-score": 0.8251121076233184,
+            "support": 112
+        },
+        "1": {
+            "precision": 0.84251968503937,
+            "recall": 0.8492063492063492,
+            "f1-score": 0.8458498023715415,
+            "support": 126
+        },
+        "macro avg": {
+            "precision": 0.8356742569340994,
+            "recall": 0.8353174603174602,
+            "f1-score": 0.83548095499743,
+            "support": 238
+        },
+        "weighted avg": {
+            "precision": 0.8360769291755858,
+            "recall": 0.8361344537815126,
+            "f1-score": 0.8360908871959072,
+            "support": 238
+        }
+    },
+    "confusion_matrix": [
+        [
+            92,
+            20
+        ],
+        [
+            19,
+            107
+        ]
+    ]
+}

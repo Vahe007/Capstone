@@ -1,0 +1,40 @@
+{
+    "model_name": "svm_model",
+    "accuracy": 0.89,
+    "classification_report": {
+        "0": {
+            "precision": 0.8782608695652174,
+            "recall": 0.9017857142857143,
+            "f1-score": 0.8898678414096917,
+            "support": 112
+        },
+        "1": {
+            "precision": 0.9105691056910569,
+            "recall": 0.8888888888888888,
+            "f1-score": 0.8995983935742972,
+            "support": 126
+        },
+        "macro avg": {
+            "precision": 0.8944149876281371,
+            "recall": 0.8953373015873016,
+            "f1-score": 0.8947331174919944,
+            "support": 238
+        },
+        "weighted avg": {
+            "precision": 0.8953652298671324,
+            "recall": 0.8949579831932774,
+            "f1-score": 0.8950193102027181,
+            "support": 238
+        }
+    },
+    "confusion_matrix": [
+        [
+            101,
+            11
+        ],
+        [
+            14,
+            112
+        ]
+    ]
+}
