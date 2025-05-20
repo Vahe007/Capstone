@@ -1,4 +1,7 @@
-import { RecoverPasswordDto, UpdatePasswordDto } from 'src/dto/changePassword.dto';
+import {
+  RecoverPasswordDto,
+  UpdatePasswordDto,
+} from 'src/dto/changePassword.dto';
 import { AuthService } from './../services/auth.service';
 import {
   Body,
@@ -56,8 +59,8 @@ export class AuthController {
   @UsePipes(new ValidationPipe())
   @HttpCode(200)
   async updatePassword(@Req() req, @Body() body: UpdatePasswordDto) {
-      const payload = req['user'];
-      console.log('payload inside the controller is', payload.email)
+    const payload = req['user'];
+    console.log('payload inside the controller is', payload.email);
 
     const { oldPassword, newPassword } = body;
     return this.authSerivce.updatePassword({

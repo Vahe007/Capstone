@@ -31,9 +31,12 @@ export const GET = async (req: NextRequest) => {
     const data = await response.json();
 
     if (response.status === 200) {
-      const cookieStore = await cookies()
-      cookieStore.set('accessToken', data.access_token);
-      return NextResponse.json({ error: null, user: data.userInfo }, { status: 200 });
+      const cookieStore = await cookies();
+      cookieStore.set("accessToken", data.access_token);
+      return NextResponse.json(
+        { error: null, user: data.userInfo },
+        { status: 200 },
+      );
     }
 
     return NextResponse.json(

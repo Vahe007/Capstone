@@ -1,12 +1,10 @@
 "use client";
 
 import React from "react";
-import { Container } from "react-bootstrap";
-import Button from "react-bootstrap/Button";
 
 interface ModelSelectorProps {
   selectedModel: string;
-  onModelChange: (value: string) => void;
+  onModelChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   activeTab: "manual" | "upload";
   onTabChange: (tab: "manual" | "upload") => void;
 }
@@ -33,12 +31,14 @@ export default function ModelSelector({
           id="mlModel"
           name="mlModel"
           value={selectedModel}
-          onChange={(e) => onModelChange(e.target.value)}
+          onChange={onModelChange}
           className="form-select block w-full px-3 py-2.5 rounded-md border-slate-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
         >
-          <option value="xgboost">XGBoost Model</option>
+          <option value="">Select a model</option>
           <option value="logistic_regression">Logistic Regression</option>
+          <option value="decision_tree">Decision Tree</option>
           <option value="knn">KNN Model</option>
+          <option value="svm">SVM Model</option>
         </select>
       </div>
 

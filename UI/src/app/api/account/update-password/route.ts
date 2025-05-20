@@ -1,5 +1,5 @@
-import { getCookie } from '@/utils';
-import { NextRequest, NextResponse } from 'next/server';
+import { getCookie } from "@/utils";
+import { NextRequest, NextResponse } from "next/server";
 
 const { API_URL } = process.env;
 
@@ -21,10 +21,10 @@ export const POST = async (req: NextRequest) => {
     }
 
     const response = await fetch(`${API_URL}/auth/updatePassword`, {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
     });
@@ -33,7 +33,7 @@ export const POST = async (req: NextRequest) => {
 
     if (response.status === 200) {
       return NextResponse.json(
-        { message: 'Password successfully changed' },
+        { message: "Password successfully changed" },
         { status: 200 },
       );
     }
@@ -45,8 +45,8 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
-    return NextResponse.json({ message: 'Unexpected error' }, { status: 400 });
+    return NextResponse.json({ message: "Unexpected error" }, { status: 400 });
   } catch {
-    return NextResponse.json({ message: 'Unexpected error' }, { status: 400 });
+    return NextResponse.json({ message: "Unexpected error" }, { status: 400 });
   }
 };

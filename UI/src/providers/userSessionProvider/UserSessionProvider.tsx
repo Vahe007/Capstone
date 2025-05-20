@@ -50,9 +50,9 @@ export const UserSessionProvider = ({
   }, []);
 
   const logout = () => {
-    Cookies.remove('accessToken');
+    Cookies.remove("accessToken");
     setUser(null);
-  }
+  };
 
   return (
     <UserSessionContext.Provider value={{ user, setUser, loading, logout }}>

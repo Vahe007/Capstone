@@ -60,7 +60,6 @@ export type DiagnosisResult = {
   createdAt: string;
 };
 
-
 export type User = {
   id: string;
   email: string;

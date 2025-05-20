@@ -98,8 +98,8 @@ export default function Profile() {
     setResetMessage("Processing password reset...");
 
     try {
-      const response = await fetch('/api/account/update-password', {
-        method: 'POST',
+      const response = await fetch("/api/account/update-password", {
+        method: "POST",
         body: JSON.stringify({
           oldPassword: values.currentPassword,
           newPassword: values.newPassword,

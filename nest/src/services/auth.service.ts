@@ -229,8 +229,6 @@ export class AuthService {
     }
   }
 
-
-
   async updatePassword({
     email,
     newPassword,
@@ -248,12 +246,13 @@ export class AuthService {
       }
 
       const userId = user._id;
-      const isPasswordMatching = await bcrypt.compare(oldPassword, user.password);
+      const isPasswordMatching = await bcrypt.compare(
+        oldPassword,
+        user.password,
+      );
 
       if (!isPasswordMatching) {
-        throw new BadRequestException(
-          'Old password is not matching',
-        );
+        throw new BadRequestException('Old password is not matching');
       }
 
       const newPasswordHash = await bcrypt.hash(newPassword, 10);
@@ -304,7 +303,6 @@ export class AuthService {
         };
       }
       throw new InternalServerErrorException('Unexpected error');
-
     } catch (error) {
       if (
         error instanceof NotFoundException ||

@@ -1,11 +1,16 @@
-'use client';
+"use client";
 
 import { UserSessionProvider } from "@/providers/userSessionProvider/UserSessionProvider";
 import GlobalHeader from "@/components/header/GlobalHeader";
 import { usePathname } from "next/navigation";
 import "./global.css";
 
-const hideHeaderRoutes = ['/login', '/sign-up', '/forgot-password', '/reset-password'];
+const hideHeaderRoutes = [
+  "/login",
+  "/sign-up",
+  "/forgot-password",
+  "/reset-password",
+];
 
 export default function RootLayout({
   children,
@@ -14,8 +19,7 @@ export default function RootLayout({
 }) {
   const pathname = usePathname();
   const shouldShowHeader = !hideHeaderRoutes.includes(pathname);
- // create a layout wrapper
- // and add that wrapper to the global layout
+
   return (
     <html lang="en">
       <head>
