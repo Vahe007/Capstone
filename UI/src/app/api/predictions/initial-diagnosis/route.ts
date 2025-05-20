@@ -8,8 +8,6 @@ export const POST = async (req: NextRequest) => {
     const accessToken = await getCookie("accessToken");
     const body = await req.json();
 
-    console.log("request body is", body);
-
     if (!API_URL) {
       return NextResponse.json(
         { error: "API_URL not defined" },

@@ -24,7 +24,6 @@ export const cleanRow = (row: Record<string, any>): FeaturesType => {
       cleaned[key] = row[key];
     }
   });
-  console.log("cleaned inside the method ", cleaned);
   return cleaned as FeaturesType;
 };
 export const fieldsConfig: FormFieldConfig[] = [
@@ -182,19 +181,18 @@ export const fieldsConfig: FormFieldConfig[] = [
     type: "select",
     options: [
       { value: "", label: "Select ST slope" },
-      // Based on PDF table: 0,1,2. Descriptions map to these.
       {
         value: 0,
         label: "Upsloping (Value 0 in some contexts, maps to Value 1 desc)",
-      }, // Assuming 0 maps to "Upsloping" if dataset uses 0,1,2
+      },
       {
         value: 1,
         label: "Flat (Value 1 in some contexts, maps to Value 2 desc)",
-      }, // Assuming 1 maps to "Flat"
+      },
       {
         value: 2,
         label: "Downsloping (Value 2 in some contexts, maps to Value 3 desc)",
-      }, // Assuming 2 maps to "Downsloping"
+      },
     ],
     validation: z
       .number({
@@ -202,19 +200,19 @@ export const fieldsConfig: FormFieldConfig[] = [
         invalid_type_error: "Please select a valid option.",
       })
       .min(0)
-      .max(2), // If dataset uses 0,1,2
+      .max(2),
   },
   {
     name: "ca",
     label: "Fluoroscopy Vessels (0-3)",
-    type: "number", // Kept as number input as it's a count, but could be select if preferred
+    type: "number",
     validation: z
       .number({
         required_error: "CA is required.",
         invalid_type_error: "CA must be a number.",
       })
       .min(0)
-      .max(3), // PDF shows 0-3, some datasets go to 4. Adjust if needed.
+      .max(3),
   },
   {
     name: "thal",
@@ -222,9 +220,6 @@ export const fieldsConfig: FormFieldConfig[] = [
     type: "select",
     options: [
       { value: "", label: "Select thalassemia type" },
-      // PDF description: 1=normal, 2=fixed, 3=reversible.
-      // If dataset uses 0 for any category (e.g. N/A or normal), add it.
-      // For now, sticking to PDF description.
       { value: 1, label: "Normal" },
       { value: 2, label: "Fixed Defect" },
       { value: 3, label: "Reversible Defect" },
@@ -235,6 +230,6 @@ export const fieldsConfig: FormFieldConfig[] = [
         invalid_type_error: "Please select a valid option.",
       })
       .min(1)
-      .max(3), // Based on PDF values 1,2,3
+      .max(3),
   },
 ];

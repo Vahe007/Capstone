@@ -36,7 +36,6 @@ export class ModelPredicitonController {
   async getMetrics(
     @Param('modelType') modelType: string,
   ): Promise<ModelMetricsDto> {
-    console.log('modeltype is', modelType);
     return this.modelPredictionService.getModelMetrics(modelType);
   }
 
@@ -51,10 +50,8 @@ export class ModelPredicitonController {
   )
   async getDiagnosis(@Req() request) {
     const payload = request['user'];
-    console.log('payload inside the controller', payload);
     const diagnosis = await this.modelPredictionService.getDiagnosis(payload);
 
-    console.log('diagnosis inside the comtroller', diagnosis);
     if (diagnosis.length) {
       return diagnosis.map((item) => ({
         requestInput: item.requestInput,
@@ -81,7 +78,6 @@ export class ModelPredicitonController {
     @Req() request,
     @Body() predictionRequestDto: ModelPredictionRequestDto,
   ): Promise<ModelPredictionResponseDto> {
-    console.log('model type is', modelType);
     const payload = request['user'];
 
     return this.modelPredictionService.predictFromFeatures(

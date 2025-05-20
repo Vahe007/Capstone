@@ -42,7 +42,6 @@ export default function FileUploadForm({
 
       if (Array.isArray(jsonData)) {
         const cleanedData = cleanRow(jsonData[0] as Record<string, any>);
-        console.log("cleanedData", cleanedData);
         setFeatures(cleanedData);
       }
 

@@ -34,10 +34,6 @@ export class ModelPredictionService {
     this.customModelFastApiUrl =
       this.configService.get<string>('diagnosis_ml_url')!;
 
-    console.log(
-      'this.configService.get<string>(diagnosis_ml_url)',
-      this.configService.get<string>('diagnosis_ml_url')!,
-    );
     if (!this.customModelFastApiUrl) {
       throw new Error('diagnosis_ml_url is not configured.');
     }
@@ -89,7 +85,6 @@ export class ModelPredictionService {
 
       return newDiagnosisEntry.save();
     } catch (error) {
-      console.log('error is error w', error);
       return null;
     }
   }
@@ -163,12 +158,6 @@ export class ModelPredictionService {
       const diagnosis = await this.diagnosisModel
         .find({ userId: user._id })
         .lean();
-      console.log('diagnosis are inside the service is', diagnosis);
-
-      console.log(
-        'plainToInstance, plainToInstance',
-        plainToInstance(DiagnosisResponseDto, diagnosis),
-      );
 
       return plainToInstance(DiagnosisResponseDto, diagnosis);
     } catch {

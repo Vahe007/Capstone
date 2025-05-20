@@ -20,9 +20,6 @@ export class EmailService {
     private configService: ConfigService,
     private userService: UserService,
   ) {
-    console.log('host_email', configService.get('host_email'));
-    console.log('host_pass', configService.get('host_pass'));
-
     this.hostEmail = configService.get('host_email')!;
     this.jwtSecret = configService.get('jwt_secret')!;
 
@@ -39,9 +36,7 @@ export class EmailService {
     template: string,
     variables: Record<string, string>,
   ): string {
-    console.log('variables are', variables);
     return template.replace(/{{(.*?)}}/g, (_, key) => {
-      console.log('key is', key);
       return variables[key.trim()] || '';
     });
   }
@@ -76,41 +71,9 @@ export class EmailService {
     };
 
     await this.emailTransporter.sendMail(mailOptions);
-
-    console.log('email sent');
   }
 
   async generateToken(payload) {
     return this.jwtService.sign(payload);
   }
-
-  // async verifyEmail(token: string) {
-  //   const user = await this.userService.findUser({ token });
-
-  //   if (!user) {
-  //     throw new HttpException('Unable to verify the account', 400);
-  //   }
-
-  //   const isValid = this.jwtService.verify(token, {
-  //     secret: this.jwtSecret,
-  //   });
-
-  //   const decoded = this.jwtService.decode(token);
-
-  //   console.log('isValid', isValid);
-  //   console.log('decoded jwt token for email verification', decoded);
-
-  //   if (!isValid) {
-  //     throw new HttpException('Token is expired', 400);
-  //   }
-
-  //   return this.userService.updateUser(user.id, {
-  //     $unset: {
-  //       token: 1,
-  //     },
-  //     $set: {
-  //       isVerified: true,
-  //     },
-  //   });
-  // }
 }

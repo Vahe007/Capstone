@@ -40,8 +40,6 @@ export class InitialDiagnosisService {
         }),
       );
 
-      console.log('response from the initial diagnosis', response);
-
       if (
         response.status === 200 &&
         response.data &&

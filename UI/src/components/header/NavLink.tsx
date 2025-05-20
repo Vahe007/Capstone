@@ -12,7 +12,6 @@ interface NavLinkProps {
 
 const NavLink = ({ href, children }: NavLinkProps) => {
   const pathname = usePathname();
-  console.log("pathname is pathname", pathname);
 
   const isActive = pathname === href;
 

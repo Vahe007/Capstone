@@ -17,7 +17,6 @@ import { JwtModule } from '@nestjs/jwt';
     MongooseModule.forRootAsync({
       useFactory: async (configService: ConfigService) => {
         const dbUri = configService.get<string>('database.uri');
-        console.log('dbUri is bro', dbUri);
         if (!dbUri) {
           throw new Error(
             'Database URI not configured in environment variables.',
@@ -43,7 +42,6 @@ import { JwtModule } from '@nestjs/jwt';
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => {
         const jwtSecret = configService.get('jwt_secret');
-        console.log('jwtSecret is', jwtSecret);
         return {
           global: true,
           secret: jwtSecret,

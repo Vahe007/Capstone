@@ -60,7 +60,6 @@ export class AuthController {
   @HttpCode(200)
   async updatePassword(@Req() req, @Body() body: UpdatePasswordDto) {
     const payload = req['user'];
-    console.log('payload inside the controller is', payload.email);
 
     const { oldPassword, newPassword } = body;
     return this.authSerivce.updatePassword({

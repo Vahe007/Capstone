@@ -117,7 +117,7 @@ export default function InitialDiagnosis() {
                 name="symptoms"
                 rows={6}
                 className="form-textarea block w-full px-3 py-2 rounded-md border-slate-300 shadow-sm placeholder-slate-400 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
-                placeholder="e.g., I have a persistent cough, slight fever for two days, and body aches..."
+                placeholder="E.g. I'm a 60-year-old female with high blood pressure and occasional chest discomfort..."
                 value={symptoms}
                 onChange={(e) => setSymptoms(e.target.value)}
               ></textarea>

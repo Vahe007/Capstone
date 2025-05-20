@@ -19,7 +19,6 @@ const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleShowPassword = () => {
-    console.log("onclick");
     setShowPassword(!showPassword);
   };
 
@@ -81,7 +80,6 @@ const LoginForm: React.FC = () => {
   const validateForm = (values: LoginFormValues) => {
     try {
       LoginSchema.parse(values);
-      console.log("values", values);
       return {};
     } catch (error) {
       if (error instanceof ZodError) {
@@ -92,7 +90,6 @@ const LoginForm: React.FC = () => {
           }
         });
 
-        console.log("errors are ", errors);
         return errors;
       }
       return {};

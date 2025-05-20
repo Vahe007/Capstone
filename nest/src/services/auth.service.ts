@@ -191,8 +191,6 @@ export class AuthService {
     try {
       const user = await this.userService.findUserBy({ email });
 
-      console.log('user is user', user);
-
       if (!user) {
         throw new BadRequestException('User not found');
       }

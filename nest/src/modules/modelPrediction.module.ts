@@ -16,7 +16,6 @@ import { UsersModule } from './users.module';
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => {
         const jwtSecret = configService.get('jwt_secret');
-        console.log('jwtSecret is', jwtSecret);
         return {
           global: true,
           secret: jwtSecret,

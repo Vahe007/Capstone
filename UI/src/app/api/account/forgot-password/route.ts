@@ -24,9 +24,6 @@ export const POST = async (req: NextRequest) => {
 
       const data = await response.json();
 
-      console.log("response inside the reset password", response);
-      console.log("data inside the reset password", data);
-
       if (response.status === 200) {
         return NextResponse.json(
           { message: "Email for reseting your password is successfully sent" },

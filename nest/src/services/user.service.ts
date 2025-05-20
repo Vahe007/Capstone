@@ -16,39 +16,9 @@ import { User, UserDocument } from 'src/schemas/user.schemas';
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  // async createUser(createUserDto: CreateUserDto) {
-  //   console.log('create user dto', createUserDto);
-  //   const newUser = await this.userModel.create(createUserDto);
-  //   await newUser.save()
-  //   return newUser.toObject()
-  // }
-
-  // async getUserById(id: string) {
-  //   console.log('this.userModel.findById(id)', this.userModel.findById(id))
-  //   return this.userModel.findById(id);
-  // }
-
   async deleteUser(id: string) {
     return this.userModel.findByIdAndDelete(id);
   }
-
-  // async updateUser(id: ObjectId, updateUserDto: UpdateQuery<UpdateUserDto>, options?: Record<string, any>): Promise<UserDocument | null> {
-  //   const updatedUser = await this.userModel.findByIdAndUpdate(id, updateUserDto, options);
-  //   if (!updatedUser) {
-  //     return null;
-  //   }
-  //   return updatedUser.toObject();
-  // }
-
-  // async findUser(query) {
-  //   return this.userModel.findOne(query);
-  // }
-
-  // async findUserBy(query: RootFilterQuery<User>): Promise<UserDocument | null> {
-  //   const user = await this.userModel.findOne(query).exec();
-  //   if (!user) return null;
-  //   return user.toObject();
-  // }
 
   async findById(id: string | Types.ObjectId): Promise<User | null> {
     return this.userModel.findById(id).lean();
@@ -92,8 +62,6 @@ export class UserService {
     const user = this.userModel
       .findByIdAndUpdate(id, updateQuery, { new: true })
       .lean();
-
-    console.log('updated user is', user);
 
     return user;
   }

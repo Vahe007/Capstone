@@ -12,7 +12,6 @@ import { InitialDiagnosisService } from 'src/services/initialDiagnosis.service';
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => {
         const jwtSecret = configService.get('jwt_secret');
-        console.log('jwtSecret is', jwtSecret);
         return {
           global: true,
           secret: jwtSecret,

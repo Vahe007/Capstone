@@ -56,13 +56,10 @@ export default function Profile() {
       try {
         const response = await fetch("/api/predictions/diagnosis");
 
-        console.log("response from the diagnosis", response);
-
         const data = await response.json();
 
         if (response.status === 200) {
           const diagnoses: DiagnosisResult[] = data.diagnosis;
-          console.log("diagnoses", diagnoses);
           setSavedDiagnoses(
             diagnoses.map((diagnosis) => ({
               date: diagnosis.createdAt,

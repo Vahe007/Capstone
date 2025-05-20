@@ -17,8 +17,6 @@ export default function VerifyEmail() {
     "Verifying your email, please wait...",
   );
 
-  console.log("verify email component");
-
   useEffect(() => {
     const token = searchParams.get("token");
 

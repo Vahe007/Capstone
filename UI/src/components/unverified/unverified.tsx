@@ -16,8 +16,6 @@ export default function Unverified() {
     setMessage("");
     setMessageType(null);
 
-    console.log("user is user", user);
-
     if (!user?.email) {
       setIsSending(false);
       return setMessageType("error");
@@ -31,9 +29,6 @@ export default function Unverified() {
     });
 
     const data = await response.json();
-
-    console.log("response is response", response);
-    console.log("data is data", response);
 
     if (response.status === 200) {
       setMessageType("success");
@@ -139,7 +134,7 @@ export default function Unverified() {
                 Sending...
               </>
             ) : (
-              "Resend Verification Email"
+              "Send Verification Email"
             )}
           </button>
         </div>

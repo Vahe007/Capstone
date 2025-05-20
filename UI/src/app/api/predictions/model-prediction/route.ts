@@ -9,9 +9,6 @@ export const POST = async (req: NextRequest) => {
     const body = await req.json();
     const { model_type, features } = body;
 
-    console.log("modelType inside the route is", model_type);
-    console.log("features inside the route is", features);
-
     if (!API_URL) {
       return NextResponse.json(
         { error: "API_URL not defined" },
@@ -34,7 +31,6 @@ export const POST = async (req: NextRequest) => {
 
     const data = await response.json();
 
-    console.log("data is data", data);
     if (response.status === 200) {
       return NextResponse.json(
         {

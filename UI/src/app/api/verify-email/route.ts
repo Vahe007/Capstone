@@ -44,7 +44,6 @@ export const GET = async (req: NextRequest) => {
       { status: 400 },
     );
   } catch (error) {
-    console.log("error inside the route is", error);
     return NextResponse.json(
       { error: "Something went wrong" },
       { status: 400 },

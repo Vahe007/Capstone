@@ -30,7 +30,6 @@ export default function ResetPassword() {
     setSubmitMessage("Setting new password...");
 
     const token = searchParams.get("token");
-    console.log("values for the change password", values);
     if (!token) {
       setSubmitMessage("Password reset token is missing. Cannot proceed.");
       setSubmitError(true);

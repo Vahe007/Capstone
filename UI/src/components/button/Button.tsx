@@ -9,8 +9,6 @@ type ButtonProps = {
 };
 
 export function Button({ onClick, isLoading }: ButtonProps) {
-  console.log("onCLick is", onClick);
-
   if (!onClick) {
     return (
       <button

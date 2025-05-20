@@ -28,8 +28,6 @@ export const GET = async (req: NextRequest) => {
 
     const data = await response.json();
 
-    console.log("data inside the route is", data);
-
     if (response.status === 200) {
       return NextResponse.json(
         {
